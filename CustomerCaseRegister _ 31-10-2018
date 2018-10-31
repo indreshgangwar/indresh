@@ -1,0 +1,640 @@
+<!--- ***************visualforcepage *************>
+<apex:page controller="CustomerCaseRegisterCntlr" standardStylesheets="false" showHeader="false" sidebar="false" id="pgid" docType="html-5.0">
+   <c:head_include ></c:head_include>
+   <apex:form id="ni">
+      <style>
+         .download-center{
+         background-image: url('{!URLFOR($Resource.img, '/img/backgrounds/footer-bg.jpg')}');
+         height:200px; 
+         min-height:250px; 
+         width:100%; 
+         margin:0; 
+         padding:0;     
+         background-size: cover;
+         }
+         /* FILE INPUT */
+         .fileUpload {
+         position: relative;
+         overflow: hidden;
+         margin: 10px;
+         cursor: pointer;
+         }
+         .fileUpload input.upload {
+         position: absolute;
+         top: 0;
+         right: 0;
+         margin: 0;
+         padding: 0;
+         font-size: 20px;
+         cursor: pointer;
+         opacity: 0;
+         filter: alpha(opacity=0);
+         width:50px;
+         }
+         .cursor a{
+         cursor:pointer;
+         font-size:14px;
+         }
+         .dataTables_filter input[type=search] {
+         border: 1px solid #c7c6c6;
+         height: 30px;
+         border-radius: 3px;
+         width: 250px;
+         margin-bottom: 10px;
+         margin-top: 10px;
+         }
+         .dataTables_filter optgroup, select{
+         border: 1px solid #c7c6c6;
+         height: 30px;
+         border-radius: 3px;
+         margin-bottom: 10px;
+         margin-top: 10px;
+         width:70px;
+         }
+         .dataTables_wrapper .dataTables_paginate .paginate_button{
+         padding: 0.2em 0.6em !important;
+         }
+         .dataTables_filter optgroup, select {
+         margin-top:0 !important;
+         }
+         .welcome-user{
+         background: none;
+         border: none;
+         font-size: 14px;
+         }
+         .url-cursor{
+            cursor:pointer;
+        }
+      </style>
+      <body>
+         <script>
+            $(window).scroll(function() {
+            if($(this).scrollTop()>0) {
+                $( ".navbar-me" ).addClass("fixed-me");
+            } else {
+                $( ".navbar-me" ).removeClass("fixed-me");
+            }
+            });
+         </script>
+         <!--navbar menu-->
+         <section class="navbar-info">
+            <div class="download-center">
+               <nav class="navbar navbar-default navbar-me">
+                  <div class="container-fluid ">
+                     <!-- Brand and toggle get grouped for better mobile display -->
+                     <div class="navbar-header">
+                        <button type="button" class="navbar-toggle collapsed menu-collapsed-button" data-toggle="collapse" data-target="#navbar-primary-collapse" aria-expanded="false">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand site-logo" href="#">
+                           <apex:image url="{!URLFOR($Resource.img, 'img/logo.png')}"/>
+                        </a>
+                     </div>
+                     <div class="collapse navbar-collapse navbar-right  header-right-menu" id="navbar-primary-collapse">
+                        <ul class="nav navbar-nav ">
+                           <li class="page-scroll">
+                              <a class="header" href="javascript:" id="about-menu">
+                                 <i class="fa fa-user-circle-o" aria-hidden="true"></i> Welcome &nbsp;
+                                 <apex:outputText value="{!con.name}" styleClass="welcome-user" style="font-size:15px; color:#489df9"/>
+                              </a>
+                           </li>
+                           <li>
+                              <a class="header" href="javascript:" id="about-menu" onclick="logout()"><i class="fa fa-power-off" aria-hidden="true"></i> Logout</a>
+                           </li>
+                           <li class="cursor">
+                              <a onclick="openNav()"><i class="fa fa-bars" aria-hidden="true"></i></a>
+                           </li>
+                        </ul>
+                     </div>
+                     <!-- /.navbar-collapse -->
+                  </div>
+               </nav>
+               <div id="mySidenav" class="sidenav">
+                  <div class="row side_nav_close">
+                     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+                  </div>
+                  <div class="row tab-main-row">
+                     <div class="col-lg-12 col-md-12 col-sm-8 col-xs-9 bhoechie-tab-container">
+                        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-4 bhoechie-tab-menu">
+                           <div class="list-group">
+                              <a href="#" class="list-group-item active text-center">
+                                 <h4 class="fa fa-user"></h4>
+                                 <br/>Account
+                              </a>
+                              <a href="#" class="list-group-item text-center">
+                                 <h4 class="fa fa-list"></h4>
+                                 <br/>Cases
+                              </a>
+                              <a href="#" class="list-group-item text-center">
+                                 <h4 class="fa fa-list"></h4>
+                                 <br/>FAQ's
+                              </a>
+                             <!--commented by suman 31-Oct-2018  <a href="#" class="list-group-item text-center">
+                                 <h4 class="fa fa-industry"></h4>
+                                 <br/>Review
+                              </a>
+                             <a href="#" class="list-group-item text-center">
+                                 <h4 class="fa fa-power-off"></h4>
+                                 <br/>Logout
+                              </a>-->
+                           </div>
+                        </div>
+                        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-8 bhoechie-tab">
+                           <!-- Products section -->
+                           <div class="bhoechie-tab-content active">
+                              <center>
+                                 <h3 style="margin-top: 0;color:#55518a">Account</h3>
+                              </center>
+                              <div class="side_menu">
+                                 <ul >
+                                    <li><a class="url-cursor" onclick="gotoMyProfile()" >My Profile</a></li>
+                                 </ul>
+                              </div>
+                           </div>
+                           <div class="bhoechie-tab-content">
+                              <center>
+                                 <h3 style="margin-top: 0;color:#55518a">Cases</h3>
+                              </center>
+                              <div class="side_menu">
+                                 <ul >
+                                    <li onclick="logCaseNav()"><a class="url-cursor"  >Log a New Case</a></li>
+                                    <!--comment by suman 31-oct-2018 <li><a onclick="myFunction()">Log a Case From Email</a></li>-->
+                                    <li><a class="url-cursor" onclick="gotoCaseDetail()" >Go to Case Details View</a></li>
+                                 </ul>
+                              </div>
+                           </div>
+                           <!-- Solutions section -->
+                           <div class="bhoechie-tab-content">
+                              <center>
+                                 <h3 style="margin-top: 0;color:#55518a">FAQ's</h3>
+                              </center>
+                              <div class="side_menu">
+                                 <ul >
+                                    <li><a href="https://saasnic-philipsnl.cs89.force.com/apex/ProblemsFAQ">Go to FAQ</a></li>
+                                 </ul>
+                              </div>
+                           </div>
+                           <!-- Commented by suman 31-Oct-2018 -->
+                           <!--<div class="bhoechie-tab-content">
+                              <center>
+                                 <h3 style="margin-top: 0;color:#55518a">Review</h3>
+                              </center>
+                              <div class="side_menu">
+                                 <ul >
+                                    <li><a href="#">Write Your Feedback</a></li>
+                                 </ul>
+                              </div>
+                           </div>
+                           c<div class="bhoechie-tab-content">
+                              <center>
+                                 <h3 style="margin-top: 0;color:#55518a">Account</h3>
+                              </center>
+                             ommented by suman 31-Oct-2018 <div class="side_menu">
+                                 <ul >
+                                    <li><a class="url-cursor" onclick="logout()">Logout</a></li>
+                                 </ul>
+                              </div>
+                           </div>-->
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </section>
+         <!---end navbar --->
+         <div id="main">
+            <div style="width:90%; margin:0 auto;">
+               <div class="row" style="min-height:350px;">
+                  <div class="title-grid">
+                     <h3>Create a Case</h3>
+                     <p class="forgotten" style="text-align:right;"><a onclick="gotomycase()"><span style="margin-right:5px;"><i class="fa fa-file-text-o"></i></span> Go to Case Details View</a>
+                     </p>
+                  </div>
+                  
+                     <div class="panel panel-default">
+                        <div class="panel-body" id="case-title">
+                           <!--//////////////////////////CASE Register From Start///////////////////--->
+                           <h5>Case Information</h5>
+                           <div class="row form-row form-group ">
+                              <div class="col-md-4">
+                                 <label for="Status">Status</label>
+                                 <select class="form-control"  disabled="disabled">
+                                    <option value="New">New</option>
+                                    <option value="Closed">Closed</option>
+                                    <option value="On Hold">On Hold</option>
+                                    <option value="Escalated">Escalated</option>
+                                    <option value="Resolved by FAQ">Resolved by FAQ</option>
+                                 </select>
+                              </div>
+                              <div class="col-md-4">
+                                 <label for="Case Type">Case Type</label>
+                                 <apex:selectList value="{!caseType}" size="1" multiselect="false" styleClass="form-control" id="hav2">
+                                    <apex:selectOptions value="{!caseTypeList}">
+                                    </apex:selectOptions>
+                                 </apex:selectList>
+                              </div>
+                              <div class="col-md-4">
+                                 <label for="Complaint Type">Complaint Type</label><br/>
+                                 <apex:selectList value="{!ComplaintType}" size="1" multiselect="false" styleClass="form-control" id="hav1">
+                                    <apex:selectOptions value="{!ComplaintTypeList}">
+                                    </apex:selectOptions>
+                                 </apex:selectList>
+                              </div>
+                           </div>
+                           <div class="row form-row">
+                              <div class="form-group col-md-4">
+                                 <label for="CaseReason">Case Reason</label>
+                                 <apex:selectList value="{!CaseReasonType}" size="1" multiselect="false" styleClass="form-control" id="hav3">
+                                    <apex:selectOptions value="{!CaseReasonTypeList}">
+                                    </apex:selectOptions>
+                                 </apex:selectList>
+                              </div>
+                              <div class="form-group col-md-4">
+                                 <label for="PurchaseDate">Purchase Date</label>
+                                 <apex:input type="date" value="{!PurchaseDate}" styleClass="form-control"/>
+                              </div>
+                              <div class="form-group col-md-4">
+                                 <label for="ExtendedWarrantyTaken">Extended Warranty Taken</label>
+                                 <apex:selectList value="{!WarrantyTaken}" size="1" multiselect="false" styleClass="form-control" id="hav5">
+                                    <apex:selectOptions value="{!WarrantyTakenList}">
+                                    </apex:selectOptions>
+                                 </apex:selectList>
+                              </div>
+                           </div>
+                           <div class="row form-row">
+                              <div class="col-md-3">
+                                 <label for="ExtendedWarrantyDuration">Extended Warranty Duration</label>
+                                 <apex:selectList value="{!WarrantyDuration}" size="1" multiselect="false" styleClass="form-control" id="hav6">
+                                    <apex:selectOptions value="{!WarrantyDurationList}">
+                                    </apex:selectOptions>
+                                 </apex:selectList>
+                              </div>
+                              <div class="form-group col-md-3">
+                                 <label for="BillNo">Bill No.</label>
+                                 <apex:inputText value="{!BillNo}" styleClass="form-control" html-placeholder="Just one . ie. Bill No." style="height:33px;font-size:15px"/>
+                              </div>
+                              <div class="form-group col-md-3">
+                                 <label for="ModelNo">Model No.</label>
+                                 <apex:inputText value="{!ModalNo}" styleClass="form-control" html-placeholder="Just one . ie. Model No." style="height:33px;font-size:15px"/>
+                              </div>
+                              <div class="form-group col-md-3">
+                                 <label for="SerialNo">Serial No.</label>
+                                 <apex:inputText value="{!SerialNo}" styleClass="form-control" html-placeholder="Just one . ie. Serial No." style="height:33px;font-size:15px"/>
+                              </div>
+                           </div>
+                           <h5>Description Information</h5>
+                           <div class="row form-row" >
+                              <div class="form-group col-md-3">
+                                 <label for="IfcustomerhasTeamviewer">Do you have Team viewer?</label>                     
+                                 <apex:selectList value="{!TeamViewer}" size="1" multiselect="false" styleClass="form-control apex-height" id="TeamViewer5">
+                                    <apex:selectOptions value="{!TeamViewerList}">
+                                    </apex:selectOptions>
+                                 </apex:selectList>
+                              </div>
+                              <div class="form-group col-md-3">
+                                 <label for="ProductFamily">Product Type</label>
+                                 <apex:actionRegion >
+                                 <apex:selectList value="{!ProductFamily}" size="1" multiselect="false" styleClass="form-control" id="hav7"  >
+                                    <apex:selectOptions value="{!ProductFamilyList}"  >
+                                    </apex:selectOptions>
+                                    <apex:actionSupport event="onchange" action="{!ChangeProductlist}" reRender="i12">
+                                    </apex:actionSupport>
+                                 </apex:selectList>
+                                 </apex:actionRegion>
+                              </div>
+                              <div class="form-group col-md-3">
+                                 <label for="Product List">Select Your Product</label>
+                                 <div class="input-group col-md-4">
+                                    <apex:outputPanel id="i12">
+                                       <apex:selectList value="{!ProductName}" size="1" multiselect="false" styleClass="form-control"  style="width:280px; height:33px; border-radius: 4px;">
+                                          <apex:selectOptions value="{!selectProdList}"  >
+                                          </apex:selectOptions>
+                                       </apex:selectList>
+                                    </apex:outputPanel>
+                                 </div>
+                              </div>
+                              <div class="form-group col-md-3">
+                                 <label for="Product List">Attach Your File</label>
+                                 <apex:inputFile id="file_File" value="{!fileBody}" filename="{!fileName}" styleclass="form-control" />
+                              </div>
+                              <!--   <apex:inputText value="{!contId}" id="con"/>-->
+                           </div>
+                           <div class="row form-row">
+                              <div class="form-group col-md-12">
+                                 <label for="Description">Description</label>
+                                 <apex:inputTextarea value="{!descc}" styleClass="form-control" style="height:80px;" html-placeholder="Description"/>
+                              </div>
+                           </div>
+                           <div class="row form-row">
+                              <div class="col-md-6 col-sm-12 col-xs-12">
+                                 <apex:commandButton value="Submit Case" styleclass="action-button btn-info"    action="{!DDCaseRegister}"/>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                 
+               </div>
+            </div>
+         </div>
+         <a id="back2Top" href="#" title="Go to Top">&#10148;</a>
+         <!--#############################FOOTER SECTION################################--->
+         <section>
+            <c:portal_footer />
+         </section>
+         <!--#############################################################--->
+         <!-- end of navbar-->
+         <script>
+            /*Scroll to top when arrow up clicked BEGIN*/
+            $(window).scroll(function() {
+            var height = $(window).scrollTop();
+            if (height > 100) {
+                $('#back2Top').fadeIn();
+            } else {
+                $('#back2Top').fadeOut();
+            }
+            });
+            $(document).ready(function() {
+            $("#back2Top").click(function(event) {
+                event.preventDefault();
+                $("html, body").animate({ scrollTop: 0 }, "slow");
+                return false;
+            });
+            
+            });
+            /*Scroll to top when arrow up clicked END*/
+         </script>
+         <script>
+            var caseid = '{!$CurrentPage.parameters.id}';
+            
+            function gotomycase(){
+             window.location.href =  '/apex/customercaseview?id='+caseid;
+            
+            
+            }
+            
+         </script>         
+        
+         <script>
+            /* Nav bar Open Left to Right */
+            function openNav() {
+            document.getElementById("mySidenav").style.width = "350px";
+            document.getElementById("main").style.marginRight = "350px";
+            document.body.style.backgroundColor = "rgba(230,230,230,0.4)";
+            }
+            function closeNav() {
+            document.getElementById("mySidenav").style.width = "0";
+            document.getElementById("main").style.marginRight= "0";
+            document.body.style.backgroundColor = "white";
+            }
+         </script>
+         <script>
+            $(document).ready(function() {
+            $("div.bhoechie-tab-menu>div.list-group>a").click(function(e) {
+                e.preventDefault();
+                $(this).siblings('a.active').removeClass("active");
+                $(this).addClass("active");
+                var index = $(this).index();
+                $("div.bhoechie-tab>div.bhoechie-tab-content").removeClass("active");
+                $("div.bhoechie-tab>div.bhoechie-tab-content").eq(index).addClass("active");
+            });
+            });
+            
+         </script>        
+         <script>
+            function logout(){
+            
+            window.location.href =  '/apex/userlogin';
+            }
+            
+         </script>
+         <script>
+            function myFunction()
+                 {
+                    // alert('email function ');
+                     popupWindow = window.open(' https://mail.google.com/mail/?view=cm&fs=1&tf=1&to=asger.mehndi@w-1gb4yd1agplft5tvxv0sq8tblr4d8jsr28suyvd3ccod19tvuu.0e-4qwruaa.cs89.case.sandbox.salesforce.com' , 'New window','width=780px,height=700px');
+                                 popupWindow.focus();
+                                 popupWindow.moveTo(570,50);  
+                                 <!--    https://mail.google.com/mail/?view=cm&fs=1&tf=1&to=youremail@gmail.com"               -->     
+                 }
+            
+            
+            function logCaseNav()
+            {
+            idfield='{!$CurrentPage.parameters.id}';
+                     console.log('case====');
+            window.location.href = 'https://saasnic-philipsnl.cs89.force.com/apex/CustomerCaseRegister?id='+idfield;
+                                     }   
+                                     
+                                     
+                                       function gotoCaseDetail(){
+                                 idfield = '{!$CurrentPage.parameters.id}';
+                            window.location.href = 'https://saasnic-philipsnl.cs89.force.com/apex/CustomerCaseview?id='+idfield;
+            
+                                 
+                    }   
+                    
+                    function gotoMyProfile(){
+                             idfield = '{!$CurrentPage.parameters.id}';
+                       window.location.href = 'https://saasnic-philipsnl.cs89.force.com/apex/CustomerProfile?id='+idfield;
+                    }      
+         </script>
+      </body>
+   </apex:form>
+</apex:page>
+
+<!**************apex class **********************>
+
+global  class CustomerCaseRegisterCntlr {
+    
+public Contact con{get;set;}
+public list<selectOption> caseTypeList {get;set;}
+public string caseType{get;set;}
+public list<selectOption> ComplaintTypeList {get;set;}
+public string ComplaintType{get;set;}
+public list<selectOption> CaseReasonTypeList {get;set;}
+public string CaseReasonType{get;set;}
+public list<selectOption> PriorityList {get;set;}
+public string Priority{get;set;}
+public list<selectOption> WarrantyTakenList {get;set;}
+public string WarrantyTaken{get;set;}
+public list<selectOption> WarrantyDurationList {get;set;}
+public string WarrantyDuration{get;set;}
+public list<selectOption> ProductFamilyList {get;set;}
+public string ProductFamily{get;set;}
+public list<selectOption> TeamViewerList {get;set;}
+public string TeamViewer{get;set;}
+
+// To get the values from page
+public list<selectOption> ProductList {get;set;}
+public list<selectOption> selectProdList {get;set;}
+Public date PurchaseDate{get;set;}
+Public string BillNo{get;set;}
+Public string ModalNo{get;set;}
+Public string SerialNo{get;set;}
+Public string ProductName{get;set;}
+Public String descc{get;set;}
+//variables for attachment
+Public static  blob filebody{get;set;}     
+public static String fileName {get;set;}
+public static String caseId{get;set;}
+
+public CustomerCaseRegisterCntlr(){
+selectProdList = new List<selectOption>();
+con=new Contact();
+string idd=ApexPages.currentPage().getParameters().get('id');
+con=[select id,Name,Company__c,User_Name__c,Email from contact where id =: idd];
+system.debug('con---'+con);
+caseTypeList = new List<selectOption>();
+
+                Schema.DescribeFieldResult fieldResult11 = case.Type.getDescribe();
+                List<Schema.PicklistEntry> cou21 = fieldResult11.getPicklistValues();
+                for( Schema.PicklistEntry f : cou21)
+                {
+                  caseTypeList.add(new SelectOption(f.getLabel(), f.getValue()));
+                }  
+                
+                
+                ComplaintTypeList = new List<selectOption>();
+
+                Schema.DescribeFieldResult fieldResult1 = case.Complaint_Type__c.getDescribe();
+                List<Schema.PicklistEntry> cou2 = fieldResult1.getPicklistValues();
+                for( Schema.PicklistEntry f : cou2)
+                {
+                  ComplaintTypeList.add(new SelectOption(f.getLabel(), f.getValue()));
+                }  
+                
+                
+                CaseReasonTypeList = new List<selectOption>();
+
+                Schema.DescribeFieldResult fieldResult2 = case.Reason.getDescribe();
+                List<Schema.PicklistEntry> cou3 = fieldResult2.getPicklistValues();
+                for( Schema.PicklistEntry f : cou3)
+                {
+                  CaseReasonTypeList.add(new SelectOption(f.getLabel(), f.getValue()));
+                }  
+                
+                PriorityList = new List<selectOption>();
+
+                Schema.DescribeFieldResult fieldResult3 = case.Priority.getDescribe();
+                List<Schema.PicklistEntry> cou4 = fieldResult3.getPicklistValues();
+                for( Schema.PicklistEntry f : cou4)
+                {
+                  PriorityList.add(new SelectOption(f.getLabel(), f.getValue()));
+                }  
+
+              WarrantyTakenList = new List<selectOption>();
+
+                Schema.DescribeFieldResult fieldResult31 = case.Extended_Warranty_Taken__c.getDescribe();
+                List<Schema.PicklistEntry> cou41 = fieldResult31.getPicklistValues();
+                for( Schema.PicklistEntry f : cou41)
+                {
+                  WarrantyTakenList.add(new SelectOption(f.getLabel(), f.getValue()));
+                }  
+                
+                WarrantyDurationList = new List<selectOption>();
+
+                Schema.DescribeFieldResult fieldResult311 = case.Extended_Warranty_Duration__c.getDescribe();
+                List<Schema.PicklistEntry> cou311 = fieldResult311.getPicklistValues();
+                for( Schema.PicklistEntry f : cou311)
+                {
+                  WarrantyDurationList.add(new SelectOption(f.getLabel(), f.getValue()));
+                }  
+                
+                ProductFamilyList = new List<selectOption>();
+
+                Schema.DescribeFieldResult fieldResult3111 = case.Product_Family__c.getDescribe();
+                List<Schema.PicklistEntry> cou3111 = fieldResult3111.getPicklistValues();
+                for( Schema.PicklistEntry f : cou3111)
+                {
+                  ProductFamilyList.add(new SelectOption(f.getLabel(), f.getValue()));
+                } 
+                
+                TeamViewerList = new List<selectOption>();
+
+                Schema.DescribeFieldResult fieldResult31p = case.If_customer_has_Team_viewer__c.getDescribe();
+                List<Schema.PicklistEntry> cou41p = fieldResult31p.getPicklistValues();
+                for( Schema.PicklistEntry f : cou41p)
+                {
+                  TeamViewerList.add(new SelectOption(f.getLabel(), f.getValue()));
+                }  
+}
+
+   
+ Public void ChangeProductlist(){
+     selectProdList =getproduct();
+ }
+ 
+   Public list<SelectOption> getproduct(){  
+       list<SelectOption> options= new List<selectOption>();
+       list <product2> prolist=new list <product2>();
+       if(ProductFamily!=''){
+           system.debug('product family'+ProductFamily);
+           for(Product2 p2:[select id ,Name,Family,Active__c from Product2 where Family =:ProductFamily and Active__c != False]){
+               options.add(new SelectOption(p2.name, p2.name));
+           }
+       }
+      return options;
+   }
+public Pagereference DDCaseRegister(){
+    string conid= ApexPages.currentPage().getParameters().get('id');
+   list<Product2> prod =[select id,name from Product2 where name=:ProductName limit 1];
+  id pid = prod[0].id;   
+  case cs = new case();
+  
+  cs.Bill_Number__c = BillNo;
+  system.debug('Bill_Number__c====>'+ cs.Bill_Number__c);
+  cs.Model_Number__c = ModalNo;
+  system.debug('Model_Number__c ====>'+ cs.Model_Number__c );
+  cs.Serial_Number__c = SerialNo;
+  cs.Purchase_Date__c = date.valueOf(PurchaseDate);
+  system.debug('Purchase_Date__c ====>'+ cs.Purchase_Date__c);
+  cs.Origin = 'Web';
+  cs.Description = descc;
+  cs.status = 'NEW';
+  //
+  cs.ContactId =conid;
+  cs.type = caseType;
+  cs.Complaint_Type__c = ComplaintType;
+  cs.Reason = CaseReasonType;
+  cs.Extended_Warranty_Taken__c = WarrantyTaken;
+  cs.Extended_Warranty_Duration__c = WarrantyDuration;
+  cs.Product_Family__c = ProductFamily;
+  cs.If_customer_has_Team_viewer__c = TeamViewer;
+  cs.Product__c = pid;
+  insert cs;
+  caseId=cs.id;
+  
+  if( filebody !=null && fileName != ''){
+      getAttachment();
+  }
+  if(cs!=null){
+    PageReference pr=new pagereference('/apex/CustomerCaseview?id='+conid); 
+    pr.seTRedirect(true);
+    return pr;
+  }
+  return null;
+  
+}
+ public static  PageReference  getAttachment()
+       {       
+       system.debug('filebody====== '+filebody) ; 
+       system.debug('caseId====== '+caseId) ;
+       list<case>   casee   = [select id from case where id=:caseId]; //order by CreatedDate DESC limit 1];
+       system.debug('size---------'+casee.size());
+       if(casee.size()>0 && filebody !=null && fileName != ''){                                                      
+           Attachment myAttachment = new Attachment();
+           myAttachment.Body = filebody ;  
+           system.debug('filebody======'+myAttachment.Body) ;                         
+           myAttachment.Name = fileName ;
+           myAttachment.ParentId = casee[0].id;          
+           system.debug('attachment called');
+           insert myAttachment;     
+       }
+      
+     return null;                   
+                     
+     }
+}
