@@ -1,0 +1,998 @@
+<apex:page controller="customercaseviewcontroller" standardStylesheets="false" showHeader="false" sidebar="false" docType="html-5.0">
+   <c:head_include ></c:head_include>
+      <c:portal_Script ></c:portal_Script>
+   <style>
+      #caseview-center{
+      background-image: url('{!URLFOR($Resource.img, '/img/backgrounds/case_log.jpg')}');
+      height:200px; 
+      min-height:250px; 
+      width:100%; 
+      margin:0; 
+      padding:0;     
+      background-size: cover;
+      }
+      .comment-window{
+      background-image: url('{!URLFOR($Resource.img, '/img/backgrounds/bg-white.png')}'); 
+      background-color: #f5f5f5c4; 
+      }
+      .comment-panel-body{
+      padding:10px;
+      }
+      .panel .slidedown .glyphicon, .chat .glyphicon
+      {
+      margin-right: 5px;
+      }
+      .custom-modal{
+      border-radius: 0;
+      text-align: center;
+      }
+      .custom-modal-title{
+      font-size:19px;
+      color:#369ce6;
+      }
+      .action-button a{
+      line-height:19px !important;
+      }
+      .comment-input{
+      height: 34px !important;
+      margin: 0;
+      padding: 0 12px !important;
+      vertical-align: middle;
+      background: #ffffff5e;
+      border: 1px solid #ddd;
+      font-family: "Lato", "Helvetica Neue", arial, helvetica, sans-serif;
+      font-size: 14px!important;
+      font-weight: 400;
+      line-height: 40px;
+      color: #888;
+      -moz-border-radius: 4px;
+      -webkit-border-radius: 4px;
+      border-radius: 4px;
+      -moz-box-shadow: none;
+      -webkit-box-shadow: none;
+      box-shadow: none;
+      -o-transition: all .3s;
+      -moz-transition: all .3s;
+      -webkit-transition: all .3s;
+      -ms-transition: all .3s;
+      transition: all .3s;
+      }
+      .panel-body-comment {
+      overflow-y: scroll;
+      height: 155px;
+      }
+      /* FILE INPUT */
+      .fileUpload {
+      position: relative;
+      overflow: hidden;
+      margin: 10px;
+      cursor: pointer;
+      }
+      .fileUpload input.upload {
+      position: absolute;
+      top: 0;
+      right: 0;
+      margin: 0;
+      padding: 0;
+      font-size: 20px;
+      cursor: pointer;
+      opacity: 0;
+      filter: alpha(opacity=0);
+      width:50px;
+      }
+      .welcome-user{
+      background: none;
+      border: none;
+      font-size: 14px;
+      }
+      
+      .url-cursor {
+        cursor: pointer;
+        font-size: 14px;
+        }
+        
+        .popup-logo{
+            width:200px;
+        }
+        .tex-center{
+            text-align:center;
+        }
+        .case-summary-table{
+            font-size:13px;
+        }
+   </style>
+   <!-- Begin Default Content REMOVE THIS -->
+   <body>
+      <script>
+         $(window).scroll(function() {
+             if($(this).scrollTop()>0) {
+                 $( ".navbar-me" ).addClass("fixed-me");
+             } else {
+                 $( ".navbar-me" ).removeClass("fixed-me");
+             }
+         });
+      </script>
+      <!--navbar menu-->
+      <section class="navbar-info">
+         <div id="caseview-center">
+            <nav class="navbar navbar-default navbar-me">
+               <div class="container-fluid ">
+                  <!-- Brand and toggle get grouped for better mobile display -->
+                  <div class="navbar-header">
+                     <button type="button" class="navbar-toggle collapsed menu-collapsed-button" data-toggle="collapse" data-target="#navbar-primary-collapse" aria-expanded="false">
+                     <span class="sr-only">Toggle navigation</span>
+                     <span class="icon-bar"></span>
+                     <span class="icon-bar"></span>
+                     <span class="icon-bar"></span>
+                     </button>
+                     <a class="navbar-brand site-logo" href="#">
+                        <apex:image url="{!URLFOR($Resource.img, 'img/logo.png')}"/>
+                     </a>
+                  </div>
+                  <div class="collapse navbar-collapse navbar-right  header-right-menu" id="navbar-primary-collapse">
+                     <ul class="nav navbar-nav ">
+                        <li class="page-scroll">
+                           <a class="header" href="javascript:" id="about-menu"><i class="fa fa-user-circle-o" aria-hidden="true"></i> Welcome<span style="font-size:13px; color:#489df9"> <input class="welcome-user" id="Welcomeuser" readonly="true" /></span></a> 
+                        </li>
+                        <li >
+                           <a class="header" href="javascript:" id="about-menu" onclick="logout()"><i class="fa fa-power-off" aria-hidden="true"></i> Sign out</a>
+                        </li>
+                        <li class="cursor" title="Go to Menu">
+                           <a onclick="openNav()"><i class="fa fa-bars" aria-hidden="true"></i></a>
+                        </li>
+                     </ul>
+                  </div>
+                  <!-- /.navbar-collapse -->
+               </div>
+            </nav>
+            <div id="mySidenav" class="sidenav">
+               <div class="row side_nav_close">
+                  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+               </div>
+               <div class="row tab-main-row">
+                  <div class="col-lg-12 col-md-12 col-sm-8 col-xs-9 bhoechie-tab-container">
+                     <div class="col-lg-3 col-md-3 col-sm-4 col-xs-4 bhoechie-tab-menu">
+                        <div class="list-group">
+                        <a href="#" class="list-group-item active text-center">
+                           <h4 class="fa fa-user"></h4>
+                           <br/>Account
+                        </a>
+                         <a href="#" class="list-group-item text-center">
+                           <h4 class="fa fa-list"></h4>
+                           <br/>Cases
+                        </a>
+                        <a href="#" class="list-group-item text-center">
+                           <h4 class="fa fa-list"></h4>
+                           <br/>FAQ's
+                        </a>
+                        <!--<a href="#" class="list-group-item text-center">
+                           <h4 class="fa fa-industry"></h4>
+                           <br/>Review
+                        </a>-->
+                     </div>
+                     </div>
+                     <div class="col-lg-9 col-md-9 col-sm-8 col-xs-8 bhoechie-tab">
+                     <!-- Products section -->
+                     <div class="bhoechie-tab-content active">
+                        <center>
+                           <h3 style="margin-top: 0;color:#55518a">Account</h3>
+                        </center>
+                        <div class="side_menu">
+                           <ul >
+                               <li><a class="url-cursor" onclick="gotoMyProfile()" >My Profile</a></li>  
+                           </ul>
+                        </div>
+                     </div>
+                     
+                     <div class="bhoechie-tab-content">
+                        <center>
+                           <h3 style="margin-top: 0;color:#55518a">Cases</h3>
+                        </center>
+                         <div class="side_menu">
+                           <ul >
+                              <li><a class="url-cursor" onclick="logCaseNav()">Log a New Case</a></li>
+                              <!--COmmented By Suman 31-)ct-2018 <li><a onclick="myFunction()">Log a Case From Email</a></li>-->
+                              <li><a class="url-cursor" onclick="gotoCaseDetail()" >Go to Case Details View</a></li>
+                           </ul>
+                        </div>
+                     </div>
+                     <!-- Solutions section -->
+                     <div class="bhoechie-tab-content">
+                        <center>
+                           <h3 style="margin-top: 0;color:#55518a">FAQ's</h3>
+                        </center>
+                         <div class="side_menu">
+                           <ul >
+                              <li><a href="https://saasnic-philipsnl.cs89.force.com/apex/ProblemsFAQ">Go to FAQ</a></li>
+                           </ul>
+                        </div>
+                     </div>
+                     <!-- Industries search -->
+                    <!--commented by suman 31-oct-2018 <div class="bhoechie-tab-content">
+                        <center>
+                           <h3 style="margin-top: 0;color:#55518a">Review</h3>
+                        </center>
+                        <div class="side_menu">
+                           <ul >
+                              <li><a href="#">Write Your Feedback</a></li>
+                           </ul>
+                        </div>
+                     </div>-->
+                  </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </section>
+      <!---////////////////Side Button////////////////-->
+      <!---////////////////Side Button////////////////-->
+      <div id="main">
+         <div style="width:90%; margin:0 auto;">
+            <div class="row">
+            <div class="title-grid">
+               <h3>Case Details List</h3>
+               <p class="forgotten" style="text-align:right;"><a href="#faq"><span style="margin-right:5px;"><i class="fa fa-list-alt" aria-hidden="true"></i></span> Go to FAQ's </a>
+                  <span style="margin-left:10px; margin-right:10px; color:#333;">| </span>
+                  <a class="url-cursor" onclick="logNewCase()"><span style="margin-right:5px;"><i class="fa fa-file-text-o"></i></span> Log a New Case </a>
+                  <!--<span style="margin-left:10px; margin-right:10px; color:#333;">| </span>
+                  <span onclick="myFunction()"><a href="#"><span style="margin-right:5px;"><i class="fa fa-envelope"></i></span>Log a Case From Email<span style="margin-left:5px;"><i class="fa fa-caret-right" aria-hidden="true"></i></span></a></span>-->
+               </p>
+            </div>
+            </div>
+            <div class="row">
+               <!--//////////////////////////CASE Details View Start///////////////////--->
+               <div class="table-responsive" id="accordion">
+                  <table id="example" class="display table table-bordered" cellspacing="0" style="width:100%; ">
+                     <thead>
+                        <tr style="background: #eee; text-align: left;  font-weight: bold;">
+                            <td >S.No.</td>
+                           <td class="col-md-2 tex-center" >Case Number </td>
+                           <td class="col-md-2 tex-center">Case Status</td>
+                           <td class="col-md-2 tex-center">Product Name</td>
+                           <td class="col-md-2 tex-center">Created Date</td>
+                            <td class="col-md-2 tex-center">Last Comment Date</td>
+                           <td class="col-md-2 tex-center">&nbsp;</td>
+                        </tr>
+                     </thead>
+                     <tbody>
+                     </tbody>
+                  </table>
+                  <!-- Attachment Section Start Here -->
+                    <!-- Case Relited File Attechments Comment - 21-09-2018--
+                 <div id="case-title" style="border-bottom:0px;">
+                     <h5>Case Related Attachments</h5>
+                  </div>
+                  <table class="table table-hover case-summary-table">
+                     <tr>
+                        <td>Customer</td>
+                        <td>File Name</td>
+                        <td>Date and Time</td>
+                        <td>View</td>
+                     </tr>
+                     <tr>
+                        <td>Support</td>
+                        <td>File Name</td>
+                        <td>Date and Time</td>
+                        <td>View</td>
+                     </tr>
+                  </table>--->
+                  <!-- Attachment Section Close Here -->
+               </div>
+               <div class="form-group" style="margin-top: 5px; margin-bottom:6px">
+                  <input type="text" id="callstatusId" readonly="true" style="font-weight: bold;  text-align: center;  " class="form-control in" />          
+               </div>
+               <input type="text" id="cmtid" style="display:none;"/>   
+            </div>
+            
+         </div>
+      </div>
+      <input type="text" id="supportcommentid" style="display:none;" />  
+      <!--##############################On Mouseover Show Case Details Start#############################################-->
+      
+      <!--##############################ON MOUSEOVER SHOW CASE Details#############################################-->
+      <a id="back2Top" href="#" title="Go to Top">&#10148;</a>
+      <!--#############################FOOTER SECTION################################--->
+      <!--<section class="footer">
+         <div class="copyright">
+            Copyright © 2018 Philips Professional Display Solutions All Rights Reserved.
+         </div>
+      </section>-->
+      
+      <section>
+      <c:portal_footer />
+      </section>
+      <!--#############################################################--->
+      <!-- Modal -->
+      <div class="modal fade" id="conformationModalCenter" tabindex="-1" role="dialog" aria-labelledby="conformationModalCenterTitle" aria-hidden="true">
+         <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content custom-modal">
+               <div class="modal-header">
+                  <h5 class="custom-modal-title" id="conformationModalCenterTitle">Ticket Number : Case Title</h5>
+               </div>
+               <div class="modal-body">
+                  <p>We are glad that your issue has been resolved by FAQ's and we are thankful for<br/> your Business.</p>
+                  <p>For any further assistance, you can contact us anytime.
+                     Should we go ahead with your permission to Close the Case?
+                  </p>
+                  <button class="action-button btn-info">Yes</button>
+               </div>
+               <div class="modal-footer">
+                  <button class="action-button btn-danger" data-dismiss="modal" aria-label="Close" >Close</button>
+               </div>
+            </div>
+         </div>
+      </div>
+      <!-- end of navbar-->
+      
+      
+      <script>
+         function logout(){
+         
+         window.location.href =  '/apex/IndexHome';
+         }
+         
+      </script>
+     
+      <script>
+         var arr= [];
+         var idfield;
+         var caseId ;
+          $(document).ready(function(){
+          console.log('on load');
+                    $("#callstatusId").hide();
+           idfield = '{!$CurrentPage.parameters.id}';
+          
+            Visualforce.remoting.Manager.invokeAction(
+                          '{!$RemoteAction.customercaseviewcontroller.caseviewCtrl1}',"{!$currentpage.parameters.id}",
+                          function(result, event){
+                            if(event.status){
+                             
+                           
+                           $.each(result, function (index, i){
+                               var  cc=i;
+                                caseId = i.Id;
+                                console.log('caseId==>'+caseId);
+                               
+                                 var Name= i.Contact.Name;    
+                                console.log('Name====>'+i.Contact.Name);
+                             <!--   console.log('Product==============='+i.Product__r.Name);   -->
+                               
+                               console.log('Product==============='+i.Product_Name__c);
+                                document.getElementById("Welcomeuser").value = Name;
+                               
+                                 var createdate =  i.createdDate__c;
+                                 var lastmodified =i.lastModifiedDate__c;
+                                str = createdate.substring(0, createdate.length - 1);
+                                str1 = lastmodified.substring(0, lastmodified.length - 1);
+                                 console.log('createdate =-=-=-=-=>>>'+createdate+'-----str--'+str);     
+                                      
+                                var date = i.Purchase_Date__c;
+                                var dt = Date.valueOf(date);
+                                var SNO=index+1;
+                        $("#example").append('<tr>'+'<td ><span>'+SNO+'</span></td>'+'<td style="text-align: left;" ><span><a href="#" id="pop-up">'+i.CaseNumber +'</a></span></td>'+'<td style="text-align: left;" ><span>'+i.Status+'</span></td>'+'<td style="text-align: left;"><span>'+i.Product_Name__c+'</span></td>'+'<td style="text-align: left;" ><span>'+str+'</span></td>'+'<td style="text-align: left;" ><span>'+str1+'</span></td>'+'<td style="text-align: right; margin-right:10px;" ><a href="/apex/viewDetails?id='+idfield+'&caseid='+caseId+'">View Details<i class="fa fa-chevron-circle-right" style="font-size:16px; margin-left:10px;"></i></a></td>'+'</tr>'+'<tr class="panel-collapse collapse" id="collapsethree'+index+'">'+'<td colspan="6" style="text-align: left;  font-size:13px;"><table class="table table-bordered case-summary-table" style="margin-bottom:0px; background:none;"><tr><th class="col-md-1 col-lg-1">Product Name</th><td class="col-md-2 col-lg-2">'+i.Product_Name__c+'</td><th class="col-md-1 col-lg-1">Model Number</th><td class="col-md-2 col-lg-2">'+i.Model_Number__c+'</td><th class="col-md-1 col-lg-1">Complaint Type</th><td class="col-md-2 col-lg-2">'+i.Complaint_Type__c+'</td><th class="col-md-1 col-lg-1">Ticket Status</th><td class="col-md-2 col-lg-2">'+i.Status+'</td></tr><tr><th>Purchase Date</th><td>'+i.Purchase_Date_F__c+'</td><th colspan="2">Extended Warranty Taken</th><td>'+i.Extended_Warranty_Taken__c+'</td><th colspan="2">Extended Warranty Duration</th><td>'+i.Extended_Warranty_Duration__c+'</td></tr><tr><th>Description</th><td colspan="7">'+i.Description+'</td></tr><tr><td colspan="8" style="text-align:right;"><button class="action-button btn-info" style="margin-right:10px;" id='+i.Id+' onclick="CommentFunc(this.id);"><a data-toggle="collapse" data-parent="#accordion" href="#collapse1'+i.Id+'"><i class="fa fa-commenting" aria-hidden="true" style="margin-right:5px;" ></i> Comment</a></button><button class="action-button btn-danger" id='+i.Id+' onclick="CloseFaq(this.id)"><i class="fa fa-times" aria-hidden="true" style="margin-right:5px;"></i>Closed</button></td></tr><tr class="panel-collapse collapse comment-window" id="collapse1'+i.Id+'"><td colspan="8" style="padding: 10px; border: none;"><div id="case-title"><h5>Comments <span style="float:right; text-align:right;"><a data-toggle="collapse" data-parent="#accordion" href="#collapse1'+i.Id+'" ><i class="fa fa-times-circle" aria-hidden="true" title="close comment"></i></a></span></h5></div><div class="panel-body panel-body-comment" style="padding: 5px 5px 0px 5px;"><div class="panel-collapse"><div class="panel-body"><ul class="chat" id="example'+i.Id+'"></ul></div></div></div><div class="input-group" style="width:100%; margin-top: 5px;"><input type="text" class="form-control comment-input" placeholder="Type your comment here..." onkeyup="EnterComment(this);" id="writecomment'+i.Id+'" required="true" style="height: 34px;" /><span class="input-group-btn fileUpload comment-button btn-primary" style="width:50px; text-align:center;  cursor: pointer;"><input type="file" class="upload " title="Attach Your File " id="attachmentId'+i.Id+'" style="height: 34px;" /><i class="fa fa-paperclip" aria-hidden="true"></i></span><span class="input-group-btn"><a data-toggle="collapse" data-parent="#accordion" href="#collapse1'+i.Id+'"><button type="button" class="comment-button btn-info" style="padding: 6px 23px; " id='+i.Id+'  onclick="myComment(this.id);" >Send</button></a></span></div></td></tr></table></td>'+'</tr>').html()
+
+ 
+                                                                 });
+                             
+                             }   
+                          
+                                   },{escape:true}
+                               );
+                 });   
+                 
+                 
+                 
+               
+                 
+                 
+                 
+                 function logNewCase(){
+                 idfield = '{!$CurrentPage.parameters.id}';
+                                     window.location.href = 'https://saasnic-philipsnl.cs89.force.com/apex/CustomerCaseRegister?id='+idfield;
+                 } 
+                 
+                 
+                 
+                 function logCaseNav(){
+                 console.log('case====');
+                 idfield = '{!$CurrentPage.parameters.id}';
+                                     window.location.href = 'https://saasnic-philipsnl.cs89.force.com/apex/CustomerCaseRegister?id='+idfield;
+                                 }     
+                                 
+                                 
+                                 
+                                 
+                function gotoCaseDetail(){
+                             idfield = '{!$CurrentPage.parameters.id}';
+                        window.location.href = 'https://saasnic-philipsnl.cs89.force.com/apex/CustomerCaseview?id='+idfield;
+
+                             
+                }                
+            
+          
+          function gotoMyProfile(){
+                         idfield = '{!$CurrentPage.parameters.id}';
+                   window.location.href = 'https://saasnic-philipsnl.cs89.force.com/apex/CustomerProfile?id='+idfield;
+                }
+          
+          
+           function closeFaqRemote(){
+              
+                 
+                 Visualforce.remoting.Manager.invokeAction(
+                     '{!$RemoteAction.customercaseviewcontroller.faqMethod}',
+                     mycaseid, 
+                     function(result, event){
+                         
+                     }, 
+                     {escape: true}
+                 );
+                 
+                 
+                 
+                 
+                 }
+          
+          
+      </script>
+      <script>
+         var mycaseid;
+              function CloseFaq(caseid){
+                      //alert('caseid--->'+caseid);
+                        mycaseid=caseid;
+                       closeFaqRemote();
+                       
+                       document.getElementById('callstatusId').value = 'Case has been Resolved!';
+                     document.getElementById("callstatusId").style.background = '#78ff00';
+                     $("#callstatusId").show();
+                     window.location.reload();
+                      
+              }
+         
+         
+      </script>
+      <script>
+         var maxStringSize = 6000000;    //Maximum String size is 6,000,000 characters
+            var maxFileSize = 4350000;      //After Base64 Encoding, this is the max file size
+            var chunkSize = 950000;         //Maximum Javascript Remoting message size is 1,000,000 characters
+            var attachment;
+            var attachmentName;
+            var fileSize;
+            var positionIndex;
+            var doneUploading;
+            var attachmentBody = " ";
+         
+         
+         
+         function uploadFile(ccid) {
+              var file = document.getElementById("attachmentId"+ccid).files[0];
+              console.log(file);
+              if(file != undefined) {
+                if(file.size <= maxFileSize) {
+                  attachmentName = file.name;
+                  var fileReader = new FileReader();
+                  fileReader.onloadend = function(e) {
+                    attachment = window.btoa(this.result);  //Base 64 encode the file before sending it
+                    positionIndex=0;
+                    fileSize = attachment.length;
+                    console.log("Total Attachment Length: " + fileSize);
+                    doneUploading = false;
+                    if(fileSize < maxStringSize) {
+                      uploadAttachment(null);
+                    } else {
+                      alert("Base 64 Encoded file is too large.  Maximum size is " + maxStringSize + " your file is " + fileSize + ".");
+                    }
+                     
+                  }
+                  fileReader.onerror = function(e) {
+                    alert("There was an error reading the file.  Please try again.");
+                  }
+                  fileReader.onabort = function(e) {
+                    alert("There was an error reading the file.  Please try again.");
+                  }
+                 
+                  fileReader.readAsBinaryString(file);  //Read the body of the file
+                 
+                } else {
+                  alert("File must be under 4.3 MB in size.  Your file is too large.  Please try again.");
+                }
+              } else {
+                alert("You must choose a file before trying to upload it");
+              }
+            }
+            
+            
+              function uploadAttachment(fileId) {
+              if(fileSize <= positionIndex + chunkSize) {
+                attachmentBody = attachment.substring(positionIndex);
+                doneUploading = true;
+              } else {
+                attachmentBody = attachment.substring(positionIndex, positionIndex + chunkSize);
+              }
+              console.log("Uploading " + attachmentBody.length + " chars of " + fileSize);
+              
+              var SupportCommentvalue=document.getElementById("supportcommentid").value;
+              
+               console.log('SupportCommentvalue====='+SupportCommentvalue);
+         
+              customercaseviewcontroller.doUploadAttachment(
+              
+              SupportCommentvalue,attachmentBody, attachmentName, fileId, 
+                function(result, event) {
+                
+                  
+                  
+                  if(event.type === 'exception') {
+                    console.log("exception");
+                    console.log(event);
+                  } else if(event.status) {
+                    if(result.substring(0,3) == '00P') {
+                      if(doneUploading == true) {
+                     
+                      } else {
+                        positionIndex += chunkSize;
+                        uploadAttachment(result);
+                      }
+                    }
+                  } else {
+                    console.log(event.message);
+                  }
+                },
+                {buffer: true, escape: true, timeout: 120000}
+              );
+            }
+         
+      </script>
+      <script>
+         function myComment(caseId){
+             
+             var Cid = caseId ;
+             console.log('Cid======'+Cid);
+             var d = new Date();
+             var n = d.toLocaleString();
+             var sendCommentRemoting = document.getElementById("cmtid").value;
+             var comments1 = document.getElementById("writecomment"+Cid).value;
+             var cc= document.getElementById("comment-confirmation");
+             var attachmentValue=document.getElementById("attachmentId"+Cid).value;
+             
+             console.log('=========attachmentValue======'+attachmentValue);
+             
+             console.log('===sendCommentRemoting==='+sendCommentRemoting);
+             console.log('===comments1=='+comments1);
+             console.log('===cc=='+cc);
+             
+             Visualforce.remoting.Manager.invokeAction(
+                     '{!$RemoteAction.customercaseviewcontroller.sendComment}',sendCommentRemoting,Cid,n,attachmentValue,
+                     
+                     function(result, event){
+                     console.log('result====='+result);
+                      var resultofcommentid=result.Id;
+                     console.log('resultofcommentid======'+resultofcommentid);
+                     
+                     document.getElementById("supportcommentid").value=resultofcommentid;
+                     //if a file exist do a file upload
+                     var file = document.getElementById("attachmentId"+Cid).files[0];
+                     if (file != undefined) {
+                         uploadFile(Cid);
+                     }
+                     
+                   
+                     }, 
+                     {escape: true}
+                 );
+                   document.getElementById('writecomment'+Cid).value = '';   
+                   document.getElementById('cmtid').value = '';
+         
+                 if(sendCommentRemoting!='' && comments1!=''){
+                 console.log('please show data modal');
+                 $('#comment-confirmation').modal({
+                     show: 'true'
+                   });
+                 }
+         }
+      </script>
+      <script>
+         var acc = document.getElementsByClassName("accordion");
+         var i;
+         
+         for (i = 0; i < acc.length; i++) {
+             acc[i].addEventListener("click", function() {
+                 this.classList.toggle("active");
+                 var panel = this.nextElementSibling;
+                 if (panel.style.display === "block") {
+                     panel.style.display = "none";
+                 } else {
+                     panel.style.display = "block";
+                 }
+             });
+         }
+      </script>
+      <script>
+         function CommentFunc(commentidboth){
+          
+          var cmidboth=commentidboth;
+          console.log('cmidboth--->'+cmidboth);
+          //alert('commmentttttt'+cmidboth);
+         
+                Visualforce.remoting.Manager.invokeAction(
+                     '{!$RemoteAction.customercaseviewcontroller.modalMethod}',cmidboth,
+                     
+                     function(result, event){
+                     
+                   //  console.log('result before stringify---'+JSON.stringify(result));
+                     
+                     //$("#example1").empty();
+                     $("#example"+cmidboth).empty();
+                     $.each(result, function (index, i){
+                     
+                  //   console.log('result after stringify---'+JSON.stringify(result));
+                     
+                     console.log('index---'+index);
+                     console.log('i---'+i);
+                     
+                     console.log('i.Comment__c of customer and support---'+i.Comment__c);
+                     console.log('i.Comment_By__c of customer and support---'+i.Comment_By__c);
+                     
+                     
+                     var createddate = i.CreatedDate;
+                     var d = new Date(createddate);
+                     var n = d.toLocaleString();
+                     
+                     var createddate1 = i.CreatedDate;
+                     var d1 = new Date(createddate1);
+                     var n1 = d.toLocaleString();
+                     
+                     console.log('Created Date after converting js to string ============'+n );
+         
+                 
+                     if(i.Comment__c != null && i.Comment_By__c =="Customer" ){
+                          //  alert('comm--'+i.Comment__c);
+                             var comm = i.Comment__c ;
+                         //$("#example1")
+                          $("#example"+cmidboth).append('<li class="right clearfix"><span class="chat-img pull-right customer-img-circle"><i class="fa fa-user customer-img-circle-icon" aria-hidden="true"></i></span><div class="chat-body clearfix"><div class="header"><small class=" text-muted"><span class="glyphicon glyphicon-time"></span>'+n1+'</small><strong class="pull-right primary-font">'+i.Comment_By__c+'</strong></div><p id="commentid2'+i.Comment__c+'">'+comm+'</p></div></li>').html()
+         
+                      }
+                      
+                      
+                      if(i.Comment__c != null && i.Comment_By__c =="Support"){
+                             var sup = i.Comment__c ;
+                          $("#example"+cmidboth).append('<li class="left clearfix"><span class="chat-img pull-left support-img-circle"><i class="fa fa-comments support-img-circle-icon" aria-hidden="true"></i></span><div class="chat-body clearfix"><div class="header"><strong class="primary-font">'+i.Comment_By__c+'</strong> <small class="pull-right text-muted"><span class="glyphicon glyphicon-time"></span>'+n+'</small></div><p id="commentid'+i.Comment__c+'">'+sup+'</p></div></li>').html()
+                      }
+                      
+                      
+                    });
+                     }, 
+                                 
+         
+                     {escape: true}
+                 );
+                 
+               
+         }
+         
+      </script>
+      <script>
+         function EnterComment(MyCommentText){
+           document.getElementById("cmtid").value = MyCommentText.value ;
+           
+         }
+         
+      </script>
+      <!--mousse over details view-->
+      <!--Log a case from mail-->
+      <script>
+         function myFunction()
+             {
+                // alert('email function ');
+                 popupWindow = window.open(' https://mail.google.com/mail/?view=cm&fs=1&tf=1&to=asger.mehndi@w-1gb4yd1agplft5tvxv0sq8tblr4d8jsr28suyvd3ccod19tvuu.0e-4qwruaa.cs89.case.sandbox.salesforce.com' , 'New window','width=780px,height=700px');
+                             popupWindow.focus();
+                             popupWindow.moveTo(570,50);  
+                             <!--    https://mail.google.com/mail/?view=cm&fs=1&tf=1&to=youremail@gmail.com"               -->     
+             }
+      </script>
+      <!--#######################COMMENT SUBMIT MODAL##################################-->
+      <div class="modal fade" id="comment-confirmation">
+         <div class="modal-dialog">
+            <div class="modal-content custom-modal">
+               <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                  <apex:image url="{!URLFOR($Resource.img, 'img/logo.png')}" styleclass="popup-logo" />
+               </div>
+               <div class="modal-body" style="text-align:center;">
+                  <apex:image url="{!$Resource.true}" height="40"/>
+                  <p style="font-size: 15px; text-align: center; margin-top:10px;">Your comment has been received. Our Support Team will get back to you.</p>
+               </div>
+            </div>
+         </div>
+      </div>
+      <!--#########################################################-->
+   </body>
+   <!-- End Default Content REMOVE THIS -->
+</apex:page>
+**********************************apex class*************************
+
+global class customercaseviewcontroller {
+
+    public String attId { get; set; }
+    public static string idd;
+    public static Id attachmentid;
+    public static Blob body;
+    public static string filename;
+    public static Id customerId;
+public customercaseviewcontroller(){
+
+}
+
+@RemoteAction
+    global static list<case> caseviewCtrl1(string idd){
+     system.debug('idd=====>'+idd);   
+    list<case> cas = new list<case>();
+    list<contact> cono = new list<contact>();
+      cono=[select id,Name,Company__c,User_Name__c,Email,(select Id,Contact.Name,Contact_Name__c,CreatedDate,createdDate__c,lastModifiedDate__c,Owner.Name,Purchase_Date_F__c,Complaint_Type__c,Complain_Number1__c,Purchase_Date__c,Extended_Warranty_Taken__c,Contactid,Model_Number__c,ContactEmail,Extended_Warranty_Duration__c,Status,Case_Number__c,CaseNumber,Product__r.Name,Product_List__c,Product_Name__c,Description from cases) from contact where id =: idd limit 1 ];
+     
+     
+     
+          for(case c : cono[0].cases)
+              {
+                    
+               cas.add(c);
+            
+              }  
+     system.debug('cas=====>'+cas);   
+    return cas;
+    }
+
+    @RemoteAction
+    global static list<case> faqMethod(string caseid){
+    
+    system.debug('==========caseid====='+caseid);
+     list<case> cas = [select id,Owner.Name,Purchase_Date_F__c,Complaint_Type__c,Complain_Number1__c,Purchase_Date__c,Extended_Warranty_Taken__c,Extended_Warranty_Duration__c,ContactEmail,Contactid,Model_Number__c,Status,Case_Number__c,CaseNumber,Product_List__c,Description from case where id =:caseid Order by CreatedDate DESC];
+     
+    system.debug('=========cas=========='+cas[0]);
+    
+    if(cas[0].Status=='Resolved by FAQ'){
+       system.debug('if method=============');
+    
+        ApexPages.addmessage(new ApexPages.message(ApexPages.severity.WARNING,'Your Case has been already Resolved!'));
+    
+    }
+    else{
+    
+        cas[0].Status='Resolved by FAQ';
+    }
+    
+  update cas ;   
+   
+  return null;
+              
+    }
+ 
+ 
+    @RemoteAction
+   global static List<Sobject> modalMethod(string modalid){
+   
+        system.debug('==========modalid====='+modalid);
+        
+        List<Support_Comment__c> SuppRes= new List<Support_Comment__c>();
+        List<Customer_Comment__c> CustRes= new List<Customer_Comment__c>();
+        List<Customer_and_Support_Comments__c> custsupport = new List<Customer_and_Support_Comments__c>();
+        //List<Attachment> attachfile=new List<Attachment>();
+        
+         list<Customer_Comment__c> cust  =[select id,Case__c,CreatedDate,Comment__c from Customer_Comment__c where Case__c =: modalid Order by CreatedDate DESC];
+        system.debug('cust --->'+cust );
+        
+        
+        list<Support_Comment__c> supp =[select id,Case__c,CreatedDate,Supp_Comments__c from Support_Comment__c  where Case__c =: modalid Order by CreatedDate DESC];
+        system.debug('supp --->'+supp );    
+        
+        
+        
+        list<Customer_and_Support_Comments__c> custosupp =[select id,Case__c,CreatedDate,Comment__c,Comment_By__c  from Customer_and_Support_Comments__c  where Case__c =: modalid Order by CreatedDate DESC];
+       // system.debug('custosupp --->'+custosupp[0].Id); 
+        
+       // List<Attachment> aa=[Select id,Name,parentId from Attachment where parentId =: custosupp[0].Id];
+       //   system.debug('aa============='+aa);
+       // system.debug('aa============='+aa[0]);
+        
+        for(Customer_and_Support_Comments__c custandsuppo :custosupp){
+        custsupport.add(custandsuppo);  
+       
+        }
+        
+       // for(Attachment attach :aa){
+       //   attachfile.add(attach);
+        
+       // }
+        
+
+        
+           for(Support_Comment__c scc : supp){
+                
+                    system.debug('for support==========='+scc);
+                    SuppRes.add(scc);
+           }
+              system.debug('resSupportComment=========='+SuppRes);
+     
+            for(Customer_Comment__c csc:cust){
+                system.debug('for customer==========='+csc);
+                 CustRes.add(csc);
+                }
+              system.debug('resCustomerComment=========='+CustRes);
+              
+              
+              
+              List<Sobject> CombinedItems=new List<Sobject>();
+                if(SuppRes.size()>0  &&  CustRes.size()>0){
+                
+                system.debug('SuppRes---'+SuppRes);
+                system.debug('CustRes---'+CustRes);
+                
+                CombinedItems.addAll(CustRes);
+                CombinedItems.addAll(SuppRes);
+                
+                }
+                 
+            system.debug('CombinedItems=========='+CombinedItems);  
+              
+    //--------------------------------------------------ForAttachmentAndCombinedComments---------------------------------------------------------------
+              
+      /*      List<Sobject> CombinedItems=new List<Sobject>();
+                if(attachfile.size()>0  &&  custsupport.size()>0){
+                
+                system.debug('attachfile---'+attachfile);
+                system.debug('custsupport---'+custsupport);
+                
+                CombinedItems.addAll(attachfile);
+                CombinedItems.addAll(custsupport);
+                
+                }
+                 
+               system.debug('CombinedItems=========='+CombinedItems);  
+               // return CombinedItems; */
+                
+                return custsupport;   
+
+        
+
+    
+    }
+    
+    @RemoteAction
+    global static Customer_Comment__c  sendComment(string sendCommentRemoting,string Cid,string timings,string attachmentValueResult){
+        
+       String fileName= '';
+       Blob body;
+        system.debug('sendCommentRemoting======'+sendCommentRemoting);
+        system.debug('Cid===='+Cid);
+        system.debug('====timings===='+timings);
+        system.debug('===attachmentValueResult===='+attachmentValueResult);
+       // system.debug('========== attachmentBody==='+attachmentBody);
+       // system.debug('========== attachmentName ==='+attachmentName );
+
+        
+        string attachmentoncomments=attachmentValueResult;
+        string comments=sendCommentRemoting;
+        string timingscus=timings;
+        
+        List<Customer_Comment__c> listofcustomercomment = new List<Customer_Comment__c>();
+        List<Customer_and_Support_Comments__c> listofcustomerandsupportcomment = new List<Customer_and_Support_Comments__c>();
+       
+       //******** Insert CuX comment***********  
+      // Set<id> ss=new Set<id>();
+       
+        Customer_Comment__c cc=new Customer_Comment__c();
+        cc.Comment__c= comments;
+        cc.Case__c=Cid;
+        cc.Timings__c=timingscus;
+        if(String.isNotBlank(cc.Comment__c)){
+        system.debug('true in customer comment');
+        listofcustomercomment.add(cc);  
+        
+       // if(cc!=null){
+              
+            insert cc;  
+            
+            system.debug('Ani======cc======='+cc);
+            
+      //   } 
+      //  customerId=cc.Id;
+     //   ss.add(customerId);
+        
+       // system.debug('===customerId===='+customerId);
+        
+      //  list<Attachment> aaa=[Select Id,Name,Body,ParentId from Attachment where ParentId=:ss];
+      //  system.debug('====aaa===='+aaa);
+       //  fileName=aaa[0].Name;
+       //  body=aaa[0].Body;
+        
+        }
+        
+       
+        
+        Customer_and_Support_Comments__c cus = new Customer_and_Support_Comments__c();
+        cus.Comment_By__c = 'Customer';
+        cus.Comment__c = comments;
+        cus.Case__c=Cid;
+                     
+        if(String.isNotBlank(cus.Comment__c)){
+        system.debug('true in customer and support comment');   
+        listofcustomerandsupportcomment.add(cus);
+        
+        insert cus; 
+        
+        
+        
+       // list<Attachment> attachList= new list<Attachment>();
+                
+      //  Attachment attach2= new Attachment ();
+      //  attach2.body= body;
+      //  attach2.name= fileName;
+      //  attach2.ParentId= cus.Id;
+      //  attachList.add(attach2);
+       // insert attachList;
+
+        
+        }
+        system.debug('size of cc-----'+listofcustomercomment.size());
+        system.debug('size of cus-----'+listofcustomerandsupportcomment.size());
+        return cc;
+        
+        
+    }
+    
+    
+    
+     @RemoteAction
+    public static Id doUploadAttachment(String acctId, String attachmentBody, String attachmentName, String attachmentId) {
+         Attachment att;
+            
+                system.debug('attachment --acctId---'+acctId);
+                try{
+                    att = getAttachment(attachmentId);
+                    String newBody = '';
+                    if(att.Body != null) {
+                        newBody = EncodingUtil.base64Encode(att.Body);
+                    }
+                    newBody += attachmentBody;
+                    att.Body = EncodingUtil.base64Decode(newBody);
+                    if(attachmentId == null) {
+                        att.Name = attachmentName;
+                        att.parentId = acctId;
+                    }
+                   
+                      insert att;
+                       
+                    
+                    }
+                    
+                    catch(Exception e){
+                    System.debug('exception====='+e.getMessage());
+                    
+                    }
+                   
+                   
+                   // system.debug('att====='+att);
+                   
+                return att.Id;
+            
+       
+    }
+    
+    
+      private static Attachment getAttachment(String attId) {
+        list<Attachment> attachments = [SELECT Id,Name,Body
+                                        FROM Attachment 
+                                        WHERE Id =: attId];
+        if(attachments.isEmpty()) {
+            Attachment a = new Attachment();
+            return a;
+        } else {
+            return attachments[0];
+        }
+    }
+    
+    
+    
+
+    
+}
