@@ -1,0 +1,659 @@
+<apex:page standardStylesheets="false" showHeader="false" controller="CustomProfileCtrl">
+<apex:form >
+<c:head_include ></c:head_include>
+<c:portal_Script ></c:portal_Script>
+<style>
+
+  .customer-profile-banner{
+  background-image: url('{!URLFOR($Resource.img, '/img/backgrounds/top.jpg')}');
+  height:100%; 
+  min-height:250px; 
+  width:100%; 
+  margin:0; 
+  background-repeat:no-repeat;
+    padding-right:0;
+ /* background-size: cover;*/
+  background-position: right 0% top 0%;
+  }
+  .feedback-text{
+  font-size: 16px;
+  color: #0565cc;
+  text-align: center;
+  }
+  .form-control{
+  height:34px !important;
+  padding: 0 15px !important;
+  font-size: 14px !important;
+  }
+  .form-horizontal .control-label {
+  text-align: left!important;
+  }     
+  .padding{
+  padding-top: 7px;
+  }
+  .welcome-user{
+  background: none;
+  border: none;
+  font-size: 14px;
+  text-transform: capitalize;
+  }
+  .url-cursor {
+  cursor: pointer;
+  font-size: 14px;
+  }
+  
+  .profile-bg{
+    background: -webkit-linear-gradient(left, rgba(20,145,222,1) 0%,rgba(185,57,208,1) 100%) url('{!URLFOR($Resource.img, '/img/backgrounds/1.jpg')}');
+    background-size: cover!important;
+    background-position: center!important;
+    margin: 0;
+    position: relative;
+  }
+  .profile-main-banner {
+    background-size: cover!important;
+    background-position: center!important;
+    margin: 0;
+    position: relative;
+}
+.profile-banner:before {
+content: "";
+display: block;
+top: 0;
+bottom: 0;
+left: 0;
+right: 0;
+position: absolute;
+background: #1491de;
+background: -webkit-gradient(left, rgba(20,145,222,1) 0%,rgba(185,57,208,1) 100%);
+background: -webkit-linear-gradient(left, rgba(20,145,222,1) 0%,rgba(185,57,208,1) 100%);
+
+  .image_outer_container{
+    margin-top: auto;
+    margin-bottom: auto;
+    border-radius: 50%;
+    position: relative;
+   }
+
+  .image_inner_container{
+    border-radius: 53%;
+    padding: 3px;
+    background: #833ab4; 
+    background: -webkit-linear-gradient(to bottom, #fcb045, #fd1d1d, #833ab4); 
+    background: linear-gradient(to bottom, #fcb045, #fd1d1d, #833ab4);
+    text-align: -webkit-center;
+   }
+   .image_inner_container_img{
+    height:250px;
+    width: 250px;
+    border-radius: 50%;
+    border: 5px solid #0796ea;
+    text-align: -webkit-center;
+   }
+
+   .image_outer_container .green_icon{
+     background-color: #4cd137;
+     position: absolute;
+     right: 30px;
+     bottom: 10px;
+     height: 40px;
+     width: 40px;
+     border:3px solid white;
+     border-radius: 50%;
+     font-size:16px;
+   }
+   
+   .profile-img{
+        width: 200px; height: 200px;border-radius: 50%; background: #cacaca;  border: 3px solid #00a2ff;
+   }
+   
+   
+   
+   
+</style>
+<body id="body">
+  <script>
+     $(window).scroll(function() {
+         if($(this).scrollTop()>0) {
+             $( ".navbar-me" ).addClass("fixed-me");
+         } else {
+             $( ".navbar-me" ).removeClass("fixed-me");
+         }
+     });
+  </script>
+<!--    <script>
+     $(document).ready(function() {
+         $("editProfile").hide();
+          $("#edit").click(function() {
+           $("#userProfile").hide();
+          $("#editProfile").show();
+         });
+     });
+  </script>   -->
+  <!--navbar menu-->
+  <section class="navbar-info">
+     <div class="customer-profile-banner">
+        <div id="caseview-center">
+           <nav class="navbar navbar-default navbar-me">
+              <div class="container-fluid ">
+                 <!-- Brand and toggle get grouped for better mobile display -->
+                 <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed menu-collapsed-button" data-toggle="collapse" data-target="#navbar-primary-collapse" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand site-logo" href="#">
+                       <apex:image url="{!URLFOR($Resource.img, 'img/logo.png')}"/>
+                    </a>
+                 </div>
+                 <div class="collapse navbar-collapse navbar-right  header-right-menu" id="navbar-primary-collapse">
+                    <ul class="nav navbar-nav ">
+                       <li class="page-scroll">
+                          <a class="header" href="javascript:" id="about-menu"><i class="fa fa-user-circle-o" aria-hidden="true"></i> Welcome<span style="font-size:13px; color:#489df9"> <input class="welcome-user" value="{!Namee }" id="Welcomeuser" readonly="true" /></span></a>
+                       </li>
+                      <li >
+                       <a class="header" href="javascript:" id="about-menu" onclick="logout()"><i class="fa fa-power-off" aria-hidden="true"></i> Sign out</a>
+                      </li>
+                  
+                       <li class="cursor">
+                          <a onclick="openNav()"><i class="fa fa-bars" aria-hidden="true"></i></a>
+                       </li>
+                    </ul>
+                 </div>
+                 <!-- /.navbar-collapse -->
+              </div>
+           </nav>
+           <div id="mySidenav" class="sidenav">
+              <div class="row side_nav_close">
+                 <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+              </div>
+              <div class="row tab-main-row">
+                 <div class="col-lg-12 col-md-12 col-sm-8 col-xs-9 bhoechie-tab-container">
+                    <div class="col-lg-3 col-md-3 col-sm-4 col-xs-4 bhoechie-tab-menu">
+                       <div class="list-group">
+                          <a href="#" class="list-group-item active text-center">
+                             <h4 class="fa fa-user"></h4>
+                             <br/>Account
+                          </a>
+                          <a href="#" class="list-group-item text-center">
+                             <h4 class="fa fa-list"></h4>
+                             <br/>Cases
+                          </a>
+                          <a href="#" class="list-group-item text-center">
+                             <h4 class="fa fa-list"></h4>
+                             <br/>FAQ's
+                          </a>
+                     <!--     <a href="#" class="list-group-item text-center">
+                             <h4 class="fa fa-industry"></h4>
+                             <br/>Review
+                          </a>
+                          <a href="#" class="list-group-item text-center">
+                             <h4 class="fa fa-power-off"></h4>
+                             <br/>Logout
+                          </a>  -->
+                       </div>
+                    </div>
+                    <div class="col-lg-9 col-md-9 col-sm-8 col-xs-8 bhoechie-tab">
+                       <!-- Products section -->
+                       <div class="bhoechie-tab-content active">
+                          <center>
+                             <h3 style="margin-top: 0;color:#55518a">Account</h3>
+                          </center>
+                          <div class="side_menu">
+                             <ul >
+                                <!--   <li><a href="#">My Profile</a></li>  -->
+                                <li><a class="url-cursor" onclick="gotoMyProfile()" >My Profile</a></li>
+                             </ul>
+                          </div>
+                       </div>
+                       <div class="bhoechie-tab-content">
+                          <center>
+                             <h3 style="margin-top: 0;color:#55518a">Cases</h3>
+                          </center>
+                          <div class="side_menu">
+                             <ul >
+                             <apex:actionfunction name="logCaseNav" action="{!RedirectLogAnewcase}" />
+                                <li><a class="url-cursor" onclick="logCaseNav()">Log a New Case</a></li>
+                               <!-- <li><a onclick="myFunction()">Log a Case From Email</a></li>-->
+                               <apex:actionfunction name="gotoCaseDetail" action="{!RedirectCaseDetail}" />
+                                <li><a class="url-cursor" onclick="gotoCaseDetail()" >Go to Case Details View</a></li>
+                             </ul>
+                          </div>
+                       </div>
+                       <!-- Solutions section -->
+                       <div class="bhoechie-tab-content">
+                          <center>
+                             <h3 style="margin-top: 0;color:#55518a">FAQ's</h3>
+                          </center>
+                          <div class="side_menu">
+                             <ul >
+                                <li><a href="https://saasnic-philipsnl.cs89.force.com/apex/ProblemsFAQ" class="url-cursor">Go to FAQ</a></li>
+                             </ul>
+                          </div>
+                       </div>
+                       <!-- Industries search -->
+                       <div class="bhoechie-tab-content">
+                    <!--      <center>
+                             <h3 style="margin-top: 0;color:#55518a">Review</h3>
+                          </center>  -->
+                          <div class="side_menu">
+                             <ul >
+                                <li><a href="#">Write Your Feedback</a></li>
+                             </ul>
+                          </div>
+                       </div>
+                       <div class="bhoechie-tab-content">
+                          <center>
+                             <h3 style="margin-top: 0;color:#55518a">Account</h3>
+                          </center>
+                     <!--     <div class="side_menu">
+                             <ul >
+                                <li><a onclick="logout()" class="url-cursor" >Logout</a></li>
+                             </ul>
+                          </div>  -->
+                       </div>
+                    </div>
+                 </div>
+              </div>
+           </div>
+        </div>
+     </div>
+  </section>
+  <!--///////////////////////////NAVIGATION SECTION END HERE/////////////////////////////////--->
+  <div id="main" style="margin-top:-90px!important;">
+     <div style="width:90%; margin:0 auto;">
+        <div class="row">
+           <div class="title-grid">
+              <h3>Profile</h3>
+           </div>
+        </div>
+      <apex:outputPanel id="mainpanel" >
+        <div class="row" id="case-title" style="margin-top:10px;">
+           <div class="panel panel-default">
+              <div class="panel-body" id="userProfile">
+                 <apex:outputPanel rendered="{! show=false}">                                                    
+                 <div class="row">
+                     <div class="col-md-3" style="text-align:center;">   
+                                <div class="image_inner_container profile-img" style="text-align: -webkit-center; padding-top:15px;">
+                                    <apex:panelGrid styleClass="image_outer_container" style="width: 200px; height: 200px;border-radius: 50%; background: #cacaca;">
+                                        <apex:image url="{!if(upContact.Gender_g__c=='Male',$Resource.ProfileDummyMale,$Resource.profile_dummy)}" style="width: 200px; height: 200px;border-radius: 50%; background: #cacaca; border: 3px solid #00a2ff;" styleClass="img-responsive" />
+                                    </apex:panelGrid>
+                                   <!--- <apex:inputFile value="{!photo}" filename="{!photoname}" onchange="saveimg()"> </apex:inputFile> -->
+                                </div>
+                         
+                                   <apex:actionRegion >
+                                   <apex:actionFunction name="saveimg" action="{!SaveImage}"/>
+                                       <!--- <apex:commandButton action="{!SaveImage}" value="Save Image"/> -->
+                                   </apex:actionRegion>
+                                    <!--<img src="https://i0.wp.com/tricksmaze.com/wp-content/uploads/2017/04/Stylish-Girls-Profile-Pictures-36.jpg?resize=300%2C300&ssl=1" />-->
+                                    
+                                    <!--Profile img upload -->
+                                    
+                                    <div id="uploadedImg" class="uploadedImg">
+                                        <span class="unveil"></span>
+                                    </div>
+                                    
+                                    <!--Profile img upload -->
+                                    
+                    </div>
+                    <div class="col-md-9 details">
+                       <div style="text-align:right;">
+                            <apex:actionRegion ><apex:outputpanel id="panel1">
+                              
+                               <a id="edit" class="url-cursor"><small><cite title="Edit Profile"> <apex:outputText value="Edit Profile" styleClass="url-cursor" style="font-size:13px"/>&nbsp;<i class="fa fa-edit"></i></cite></small></a> 
+                                <apex:actionSupport event="onclick" action="{!SaveCustmr}" rerender="mainpanel"/>
+                            </apex:outputpanel> </apex:actionRegion> 
+                       </div>
+                     
+                       <!--user details start-->
+                       
+                       <div class="form-horizontal">
+                       <div class="col-md-6">
+                          <h5 style="text-transform: capitalize;">Basic Information </h5>
+                          <div class="form-group">
+                             <label class="control-label col-md-4" for="cName">Name:</label>
+                             <div class="col-md-8 padding">
+                                 <apex:outputText styleclass=" text-transform: capitalize;" value="{!Namee }" id="name2" />
+                                
+                             </div>
+                          </div>
+                          <div class="form-group">
+                             <label class="control-label col-md-4" for="UserName">User Name:</label>
+                             <div class="col-md-8 padding"> 
+                              <apex:outputText styleclass=" text-transform: capitalize;" value="{!username}" id="Usrname2"/>
+                               
+                             </div>
+                          </div>
+                          <div class="form-group">
+                             <label class="control-label col-md-4" for="Email">Email:</label>
+                             <div class="col-md-8 padding"> 
+                             <apex:outputText styleclass=" text-transform: capitalize;" value="{!Email2}" id="Email2" />
+                               
+                             </div>
+                          </div>
+                          <div class="form-group">
+                             <label class="control-label col-md-4" for="PhoneNumber">Phone Number:</label>
+                             <div class="col-md-8 padding"> 
+                             
+                                <apex:outputText styleclass=" text-transform: capitalize;" value="{!phn}" id="Phone2"/>
+                             </div>
+                          </div>                        
+                          <div class="form-group">
+                             <label class="control-label col-md-4" for="PhoneNumber">Gender:</label>
+                             <div class="col-md-8 padding"> 
+                             
+                                <apex:outputText styleclass=" text-transform: capitalize;" value="{!upcontact.Gender_g__c}" id="gender"/>
+                             </div>
+                          </div>
+                          </div>
+                          <div class="col-md-6">
+                          <h5 style="text-transform: capitalize;">Contact Information </h5>
+                          
+                          <div class="form-group">
+                             <label class="control-label col-md-4" for="MailingStreet">Street:</label>
+                             <div class="col-md-8 padding"> 
+                             <apex:outputText styleclass=" text-transform: capitalize;" value="{!mailingstreet}" id="Street2"/>
+                              
+                             </div>
+                          </div>
+                          <div class="form-group">
+                             <label class="control-label col-md-4" for="PostcodeZipcode">Postcode / Zipcode:</label>
+                             <div class="col-md-8 padding"> 
+                             <apex:outputText styleclass=" text-transform: capitalize;" value="{!mailpostalcode}" id="Postl2"/>
+                              
+                             </div>
+                          </div>
+                          <div class="form-group">
+                             <label class="control-label col-md-4" for="MailingCity">City:</label>
+                             <div class="col-md-8 padding">
+                             <apex:outputText styleclass=" text-transform: capitalize;" value="{!mailingcity}" id="City2"/> 
+                               
+                             </div>
+                          </div>
+                          <div class="form-group">
+                             <label class="control-label col-md-4" for="MailingStateProvince">State/Province:</label>
+                             <div class="col-md-8 padding"> 
+                               
+                               <apex:outputText styleclass=" text-transform: capitalize;" value="{!mailingstate}" id="State2"/>
+                             </div>
+                          </div>
+                          <div class="form-group">
+                             <label class="control-label col-md-4" for="MailingCountry">Country:</label>
+                             <div class="col-md-8 padding"> 
+                                
+                                <apex:outputText styleclass=" text-transform: capitalize;" value="{!mailingcntry}" id="Country2"/>
+                             </div>
+                          </div>
+                          
+                          </div>
+                       </div>
+                       
+                       <!--/////////////////////////user details end///////////////////////////////////-->
+                    </div>
+                    
+                    
+                    
+                 </div>
+                 </apex:outputPanel>
+              </div>
+              <!--profile edit section start here -->
+             <apex:outputpanel rendered="{!show=true}">
+              <div class="panel-body" id="editProfile" >
+                <h5>Edit Profile Info</h5>
+                <div class="form-group">
+                                
+                                <div class="col-md-9 "> 
+                                  
+                                   
+                                </div>
+                             </div>
+                 <div class="row">
+                                     
+                    <div class="col-md-6 details">
+                       
+                       <!--user details start-->
+                       
+                       <div class="col-md-12">
+                          <div class="form-horizontal">
+                             <div class="form-group">
+                                <label class="control-label col-md-3" for="cName">Name:</label>
+                                <div class="col-md-9 ">
+                                   <apex:outputText styleclass=" form-control" value="{!Namee }" id="Name1" style="background:lightgrey"/>
+                                </div>
+                             </div>
+                             <div class="form-group">
+                                <label class="control-label col-md-3" for="UserName">User Name:</label>
+                                <div class="col-md-9 "> 
+                                   <apex:outputText styleclass=" form-control" value="{!username}" id="Usrname1" style="background:lightgrey"/>
+                                </div>
+                             </div>
+                             <div class="form-group">
+                                <label class="control-label col-md-3" for="Email">Email:</label>
+                                <div class="col-md-9 "> 
+                                   <apex:outputText styleclass=" form-control" value="{!Email2}" id="Email1" style="background:lightgrey"/>
+                                </div>
+                             </div>
+                             <div class="form-group">
+                                <label class="control-label col-md-3" for="PhoneNumber">Phone Number:</label>
+                                <div class="col-md-9 ">
+                                   <div class="input-group col-md-12">
+                                   <apex:outputPanel >                                         
+                                     <apex:inputText styleclass="form-control" value="{!cCode}" id="P" style="width:20%" />
+                                      <apex:inputText styleclass=" form-control" value="{!phn}" id="Phone1" style="width: 80%;"/></apex:outputPanel>
+
+                                   </div>
+                                </div>
+                             </div>
+                             <div class="form-group">
+                                <label class="control-label col-md-3" for="Gender">Gender:</label>
+                                <div class="col-md-9 "> 
+                                   <apex:inputfield styleclass="form-control" value="{!upcontact.Gender_g__c}" id="Gender1" />
+                                </div>
+                             </div>
+                             
+                             
+                             
+                             
+                          </div>
+                       </div>
+                       <!--user details end-->
+                    </div>
+                    
+                    <div class="col-md-6 col-sm-6 details">
+                    <div class="col-md-12">
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                <label class="control-label col-md-3" for="MailingStreet">Street:</label>
+                                <div class="col-md-9 "> 
+                                   <apex:inputText styleclass=" form-control" value="{!mailingstreet}" id="Street1"/>
+                                </div>
+                             </div>
+                            
+                            
+                             <div class="form-group">
+                                <label class="control-label col-md-3" for="PostcodeZipcode">Postcode / Zipcode:</label>
+                                <div class="col-md-9 "> 
+                                   <apex:inputText styleclass=" form-control" value="{!mailpostalcode}" id="Postl1"/>
+                                </div>
+                             </div>
+                             <div class="form-group">
+                                <label class="control-label col-md-3" for="MailingCity">City:</label>
+                                <div class="col-md-9 "> 
+                                   <apex:inputText styleclass=" form-control" value="{!mailingcity}" id="City1"/>
+                                </div>
+                             </div>
+                             <div class="form-group">
+                                <label class="control-label col-md-3" for="MailingStateProvince">State/Province:</label>
+                                <div class="col-md-9 "> 
+                                   <apex:inputText styleclass=" form-control" value="{!mailingstate}" id="State1"/>
+                                </div>
+                             </div>
+                             <div class="form-group">
+                                <label class="control-label col-md-3" for="MailingCountry">Country:</label>
+                                <div class="col-md-9 "> 
+                                   <apex:inputText styleclass=" form-control" value="{!mailingcntry}" id="Country1"/>
+                                   
+
+                                </div>
+                             </div>
+                              
+                             </div>
+                             
+                             </div>
+                            
+                    </div>
+                   
+                 </div>
+                 
+                 
+                 <div class="panel-footer" style="text-align:right;">
+                
+                    <apex:commandButton styleclass="action-button btn-info btn-info" action="{!Savee}" value="Save" reRender="mainpanel"/>&nbsp;
+                    <apex:commandButton styleclass="action-button btn-danger" action="{!Cancel}" value="Cancel" reRender="mainpanel"/>
+                 
+                 </div>
+                 
+              </div>
+                </apex:outputpanel>
+              <!--edit profile section close here-->                    
+           </div>             
+        </div>
+        </apex:outputPanel>
+     </div>
+  </div>
+  
+     <script>
+        function logout(){
+        
+        window.location.href =  '/apex/IndexHome';
+        }
+        
+     </script>
+  
+  
+  <!-- end of navbar-->
+  <a id="back2Top" href="#" title="Go to Top">&#10148;</a>
+  <!--#############################FOOTER SECTION################################--->
+  <section>
+     <c:portal_footer />
+  </section>
+  <!--#############################################################--->
+
+
+
+</body>
+</apex:form>
+</apex:page>
+******************************************************apex class********************************************
+global class CustomProfileCtrl {
+
+public CustomProfileCtrl(){
+
+CustomerMthd();
+}
+
+public Id contactId;
+public boolean show{get;set;}
+public string nam{get;set;}
+public string Namee{get;set;}
+public string username{get;set;}
+public string Email2{get;set;}
+public string phn{get;set;}
+public string cCode{get;set;}
+public string mailingstreet{get;set;}
+public string mailpostalcode{get;set;}
+public string mailingcity{get;set;}
+public string mailingstate{get;set;}
+public string mailingcntry{get;set;}
+public blob Photo{get;set;}
+public string photoname{get;set;}
+public string photourl{get;set;}
+
+
+Public Contact upContact{get;set;}
+
+public void CustomerMthd(){
+
+  upContact =new Contact();
+  contactId= ApexPages.currentPage().getParameters().get('id');
+  system.debug('contactId=====>'+contactId);
+
+  upContact = [select name,Email,User_Name__c,Country_Codes__c,Gender_g__c,Phone,MailingStreet,MailingPostalCode,MailingCity,MailingState,MailingCountry,image__c,imageUrl__c from contact WHERE Id =:contactId];
+  system.debug('upContact=======>'+upContact);
+  
+   // getImage= upContact.image__c;
+    Namee = upcontact.name;
+    Email2  = upContact.Email;
+    username = upcontact.User_Name__c;
+    cCode =  upcontact.Country_Codes__c;
+    phn = upcontact.Phone;
+    mailingstreet = upcontact.MailingStreet;
+    mailpostalcode = upcontact.MailingPostalCode;
+    mailingcity = upcontact.MailingCity;
+    mailingstate = upcontact.MailingState;
+    mailingcntry = upcontact.MailingCountry;
+    //update upcontact;
+    system.debug('upcontact====>'+upcontact);                
+} 
+
+public void SaveCustmr(){ 
+system.debug('hello');  
+show = True;
+} 
+public void Savee(){ 
+system.debug('phn====>'+upcontact.Gender_g__c); 
+Contact cc = new Contact();
+cc.Id= contactId;
+cc.imageUrl__c= photourl;
+cc.Country_Codes__c = cCode;
+cc.Phone = phn;
+cc.MailingStreet= mailingstreet;
+cc.MailingPostalCode= mailpostalcode;
+cc.MailingCity= mailingcity;
+cc.MailingState= mailingstate ;
+cc.MailingCountry= mailingstate;
+cc.Gender_g__c=upcontact.Gender_g__c;
+update cc;
+show = False;
+system.debug('cc====>'+cc);
+}
+public void Cancel(){ 
+system.debug('hello');  
+  show = false;
+}  
+public Pagereference RedirectLogAnewcase(){
+string idfield=ApexPages.currentPage().getParameters().get('id');
+    pagereference pr=new pagereference('/apex/CustomerCaseRegister?id='+idfield);
+    pr.SetRedirect(true);
+    return pr;
+}  
+
+public Pagereference RedirectCaseDetail(){
+string idfield=ApexPages.currentPage().getParameters().get('id');
+    pagereference prr=new pagereference('/apex/CustomerCaseview?id='+idfield);
+    prr.SetRedirect(true);
+    return prr;
+}  
+
+public void SaveImage(){
+    contactId= ApexPages.currentPage().getParameters().get('id');
+    if(photoname!='' && Photo!=null){
+     Attachment objAtt = new Attachment();
+        system.debug('******====='+photo);
+        objAtt.body = photo;
+        objAtt.name = photoname;
+        objAtt.parentid= contactId;
+        objAtt.ContentType = 'application/jpg';
+        insert objAtt;
+        
+         string Attid= objAtt.id;
+         upContact.imageUrl__c= '/servlet/servlet.FileDownload?file='+Attid;
+         update upContact ;
+         photourl = upContact.imageUrl__c;
+         system.debug('===photourl ==='+photourl );
+         }
+}       
+
+
+}
