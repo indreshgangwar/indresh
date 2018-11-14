@@ -1,0 +1,298 @@
+<apex:page standardStylesheets="false" showHeader="false" docType="html" controller="ProblemsFAQCustomer_Controller">
+  <apex:form >
+      <c:head_include ></c:head_include>
+      <c:portal_Script ></c:portal_Script>
+      <style>
+         .download-center{
+         background-image: url('{!URLFOR($Resource.img, '/img/backgrounds/faq-banner.jpg')}');
+         height:200px; 
+         min-height:218px; 
+         width:100%; 
+         margin:0; 
+         padding:0;     
+         background-size: cover;
+         }
+      </style>
+      <body>
+         <script>
+            $(window).scroll(function() {
+                if($(this).scrollTop()>0) {
+                    $( ".navbar-me" ).addClass("fixed-me");
+                } else {
+                    $( ".navbar-me" ).removeClass("fixed-me");
+                }
+            });
+         </script>
+         <!--navbar menu-->
+         <section class="navbar-info">
+            <div class="download-center">
+               <nav class="navbar navbar-default navbar-me">
+                  <div class="container-fluid ">
+                     <!-- Brand and toggle get grouped for better mobile display -->
+                     <div class="navbar-header">
+                        <button type="button" class="navbar-toggle collapsed menu-collapsed-button" data-toggle="collapse" data-target="#navbar-primary-collapse" aria-expanded="false">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand site-logo" href="#">
+                           <apex:image url="{!URLFOR($Resource.img, 'img/logo.png')}"/>
+                        </a>
+                     </div>
+                     <div class="collapse navbar-collapse navbar-right  header-right-menu" id="navbar-primary-collapse">
+                     <ul class="nav navbar-nav ">
+                        <li class="page-scroll">
+                           <a class="header" href="javascript:" id="about-menu"><i class="fa fa-user-circle-o" aria-hidden="true"></i> Welcome<span style="font-size:13px; color:#489df9">&nbsp; <apex:outputtext value="{!con.name}" styleclass="welcome-user" style="font-weight:550"/></span></a> 
+                        </li>
+                        <li >
+                           <apex:outputLink value="/apex/indexhome"><i class="fa fa-power-off" aria-hidden="true"></i> Sign out</apex:outputLink>
+                        </li>
+                        <li class="cursor" title="Go to Menu">
+                           <a onclick="openNav()"><i class="fa fa-bars" aria-hidden="true"></i></a>
+                        </li>
+                     </ul>
+                  </div>
+                     <!-- /.navbar-collapse -->
+                  </div>
+               </nav>
+             
+                <div id="mySidenav" class="sidenav">
+               <div class="row side_nav_close">
+                  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+               </div>
+               <div class="row tab-main-row">
+                  <div class="col-lg-12 col-md-12 col-sm-8 col-xs-9 bhoechie-tab-container">
+                     <div class="col-lg-3 col-md-3 col-sm-4 col-xs-4 bhoechie-tab-menu">
+                        <div class="list-group">
+                        <a href="#" class="list-group-item active text-center">
+                           <h4 class="fa fa-user"></h4>
+                           <br/>Account
+                        </a>
+                         <a href="#" class="list-group-item text-center">
+                           <h4 class="fa fa-list"></h4>
+                           <br/>Cases
+                        </a>
+                        <a href="#" class="list-group-item text-center">
+                           <h4 class="fa fa-list"></h4>
+                           <br/>FAQ's
+                        </a>
+                        <!--<a href="#" class="list-group-item text-center">
+                           <h4 class="fa fa-industry"></h4>
+                           <br/>Review
+                        </a>-->
+                     </div>
+                     </div>
+                     <div class="col-lg-9 col-md-9 col-sm-8 col-xs-8 bhoechie-tab">
+                     <!-- Products section -->
+                     <div class="bhoechie-tab-content active">
+                        <center>
+                           <h3 style="margin-top: 0;color:#55518a">Account</h3>
+                        </center>
+                        <div class="side_menu">
+                           <ul >
+                               <li><apex:outputLink value="/apex/CustomerProfile?id={!con.id}" styleClass="url-cursor">My Profile</apex:outputLink></li>  
+                           </ul>
+                        </div>
+                     </div>
+                     
+                     <div class="bhoechie-tab-content">
+                        <center>
+                           <h3 style="margin-top: 0;color:#55518a">Cases</h3>
+                        </center>
+                         <div class="side_menu">
+                           <ul >
+                              <li><apex:outputLink value="/apex/CustomerCaseRegister?id={!con.id}" styleClass="url-cursor">Log a New Case</apex:outputLink></li>
+                              <!--COmmented By Suman 31-)ct-2018 <li><a onclick="myFunction()">Log a Case From Email</a></li>-->
+                              <li><apex:outputLink value="/apex/CustomerCaseview?id={!con.id}" styleClass="url-cursor">Go to Case Details View</apex:outputLink></li>
+                           </ul>
+                        </div>
+                     </div>
+                     <!-- Solutions section -->
+                     <div class="bhoechie-tab-content">
+                        <center>
+                           <h3 style="margin-top: 0;color:#55518a">FAQ's</h3>
+                        </center>
+                         <div class="side_menu">
+                           <ul >
+                              <li><apex:outputLink value="/apex/ProblemsFAQCustomer?id={!con.id}" styleClass="url-cursor">Go to FAQ</apex:outputLink></li>
+                           </ul>
+                        </div>
+                     </div>
+                     <!-- Industries search -->
+                    <!--commented by suman 31-oct-2018 <div class="bhoechie-tab-content">
+                        <center>
+                           <h3 style="margin-top: 0;color:#55518a">Review</h3>
+                        </center>
+                        <div class="side_menu">
+                           <ul >
+                              <li><a href="#">Write Your Feedback</a></li>
+                           </ul>
+                        </div>
+                     </div>-->
+                  </div>
+                  </div>
+               </div>
+            </div>
+        
+             
+             
+            </div>
+         </section>
+         
+         <div id="main">
+            <div style="width:90%; margin:0 auto;">
+               <div class="title-grid">
+                  <h3>Always here to help</h3>
+                  <p class="forgotten"><a href="#">Need Help?</a> <span style="color:#000;">/</span> <apex:outputLink value="/apex/CustomerCaseRegister?id={!con.id}">Register a Case <span><i class="fa fa-caret-right" aria-hidden="true"></i></span></apex:outputLink></p>
+               </div>
+               <div class="row">
+                  <div id="case-title" style="margin-bottom:25px;">
+                     <div class="col-xs-12" style="margin-bottom: 20px; margin-top: 5px;">
+                        <div class="input-group">
+                           <div class="input-group-btn search-panel">
+                              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                              <span id="search_concept">Filter by - Select Your Product Family</span> <span class="caret"></span>
+                              </button>
+                              <ul class="dropdown-menu" role="menu">
+                                 <li><a href="#All">All </a></li>
+                                 <li><a href="#AOCMonitors">AOC Monitors </a></li>
+                                 <li><a href="#PhilipsMonitors ">Philips Monitors </a></li>
+                                 <li><a href="#HospitalityTV ">Hospitality TV</a></li>
+                                 <li><a href="#Monitors">Monitors</a></li>
+                                 <li><a href="#Signage">Signage</a></li>
+                                 <li><a href="#Blank">Blank</a></li>
+                              </ul>
+                           </div>
+                           <apex:actionFunction name="Search" action="{!search}"/>
+                           <!-- <input type="hidden" name="search_param" value="all" id="search_param" /> --->
+                           <apex:inputText value="{!searchText}" styleClass="form-control" html-placeholder="Type your Product name..."/>   
+                           <span class="input-group-btn">
+                              <button class="btn btn-default" id="buttonId" type="button" onclick="Search();"><span class="glyphicon glyphicon-search"></span></button>                             
+                           </span>
+                        </div>
+                     </div>
+                  </div>
+               </div>             
+               <div id="serId" style="margin-bottom:20px;">
+                  <apex:outputPanel rendered="{!Showtable=true}"><div id="case-title" >
+                     <h5>Search Result</h5>
+                  </div>
+                  <table class="table table-bordered">
+                     <thead>
+                        <tr>
+                           <th>FAQ Name</th>
+                           <th>FAQ</th>
+                           <th>Attachment</th>
+                           <th>Case</th>
+                        </tr>
+                     </thead>
+                     <tbody>
+                        <apex:repeat value="{!faqList1}" var="a" id="faqList11">
+                           <tr>
+                              <td>{!a.name}</td>
+                              <td>{!a.FAQ__c}</td>
+                              <td><apex:outputtext value="{!a.Attachment__c}"  escape="false"/></td>
+                              <td>{!a.Case__c}</td>
+                           </tr>
+                        </apex:repeat>
+                     </tbody>
+                  </table></apex:outputPanel>
+               </div>
+  
+      
+               <!--FAQ END --->
+               <div class="row">
+                  <div class="col-md-12" id="search_param">
+                     <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                        <apex:repeat value="{!faqList}" var="faq" >
+                           <div class="panel panel-default">
+                              <div class="panel-heading" role="tab" id="headingOne">
+                                 <h4 class="panel-title">
+                                    <a role="button" data-toggle="collapse" data-parent="#accordion" href="#{!faq.Id}" aria-expanded="true" aria-controls="collapseOne">
+                                    {!faq.Name}  
+                                    </a>    
+                                 </h4>
+                              </div>
+                              <div id="{!faq.Id}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                                 <div class="panel-body">
+                                    <apex:outputText value="{!faq.FAQ__c}" >
+                                      
+                                    </apex:outputText>
+                                    <br/><br/>
+                                    <apex:outputText value="{!faq.Attachment__c}" escape="false">
+                                       
+                                    </apex:outputText>
+                                 </div>
+                              </div>
+                           </div>
+                        </apex:repeat>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+         <a id="back2Top" href="#" title="Go to Top">&#10148;</a>
+         <!--#############################FOOTER SECTION################################--->
+         <section>
+            <c:portal_footer />
+         </section>
+         <!--#############################################################--->
+         <!-- end of navbar-->
+          <script>
+            $(document).ready(function(e){
+            $('.search-panel .dropdown-menu').find('a').click(function(e) {
+            e.preventDefault();
+                var param = $(this).attr("href").replace("#","");
+                var concept = $(this).text();
+                $('.search-panel span#search_concept').text(concept);
+                $('.input-group #search_param').val(param);
+            });
+            });
+         </script>         
+      </body>
+   </apex:form>
+</apex:page>
+***********************************************apex class******************************
+
+public class ProblemsFAQCustomer_Controller {
+
+    public List<FAQ__c> faqList {get;set;}
+    public boolean Showtable {get;set;}
+    public contact con{get;set;}
+    List<FAQ__c> faqList1;
+    string searchText;
+ 
+ Public ProblemsFAQCustomer_Controller (){
+         string conid=apexpages.currentpage().getparameters().get('id');
+    con=new contact();
+    con=[select id,name from contact where id=:conid];
+       Showtable=false; 
+       if(faqList == null)
+          faqList = new List<FAQ__c>();
+       system.debug('faqList=====>'+faqList);
+       faqList = [Select Id, Name,FAQ__c,Attachment__c,Case__c From FAQ__c LIMIT 1000];
+       system.debug('faqList=====>'+faqList);
+  }
+  
+ public String getSearchText() {
+      return searchText;
+   }
+   public void setSearchText(String s) {
+      searchText = s;
+   }
+   
+   public List<FAQ__c> getfaqList1() {
+      return faqList1;
+   }
+
+   public PageReference Search() {
+       Showtable=true;
+      faqList1  = (List<FAQ__c>)[FIND :searchText RETURNING FAQ__c(Name, FAQ__c, Attachment__c, Case__c)][0];
+      return null;
+   }
+   
+   
+  
+ 
+}
