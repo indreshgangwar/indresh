@@ -1,0 +1,386 @@
+<apex:page showHeader="false" standardStylesheets="false" controller="BidRequestsMMDController">
+<apex:form id="frm">
+   <!--style sheet and js include-->
+   <c:BidRequestsMMD />
+   <!--style sheet and js include close-->
+   <c:portal_Script ></c:portal_Script>
+   <style>
+      .head_banner{
+      background-image: url('{!URLFOR($Resource.img, '/img/backgrounds/rfq-banner.jpg')}');
+      height:200px; 
+      min-height:200px; 
+      width:100%; 
+      margin:0; 
+      padding:0;     
+      background-size: cover;
+      }
+      .btn-size{
+      width:150px;
+      }
+      .table-bordered>tbody>tr>td, .table-bordered>tbody>tr>th, .table-bordered>tfoot>tr>td, .table-bordered>tfoot>tr>th, .table-bordered>thead>tr>td, .table-bordered>thead>tr>th {
+      vertical-align: inherit;
+      }
+      .url-cursor{
+        cursor:pointer;
+      }
+      .site-logo {
+        padding: 12px 25px 10px 65px !important;
+        width: 270px;
+        }
+        input[type="text"], input[type="password"], textarea, textarea.form-control{
+                height: 34px;
+                margin: 0;
+                padding: 0 7px;
+                font-size:14px !important;
+        }
+        .input-icon {
+            background-color: #eee!important;
+            font-size: 12px !important;
+            padding: 6px 6px !important;
+        }
+        .discount-input{
+            width: 70px!important;
+        }
+        .amount-input{
+            width: 100px;
+        }
+   </style>
+   <body>
+      <script>
+         $(window).scroll(function() {
+             if($(this).scrollTop()>5) {
+                 $( ".navbar-me" ).addClass("fixed-me");
+             } else {
+                 $( ".navbar-me" ).removeClass("fixed-me");
+             }
+         });
+      </script>
+      <script>
+       // $(document).ready(function() {
+          //  $("editTable").hide();
+           //  $("#edit").click(function() {
+           //   $("#rfqTable").hide();
+           //  $("#editTable").show();
+         //   });
+     //   });
+      </script>      
+      <script>
+          function UpdateTable(tRetailId,RfProdId,amountid,Discountid,i,check){
+              var amount= parseFloat(document.getElementById(amountid).value);
+              var Discount=parseFloat(document.getElementById(Discountid).value);
+               try{
+               // var RetailPrice=document.getElementById("myTable").rows[i].cells[3].innerHTML;
+                var RetailPrice=parseFloat(document.getElementById(tRetailId).value);
+                // alert(i);
+                // alert(amount+'=type='+amount+'==='+Discount);
+                // code for discount change
+                if(check==true){
+                    var amt=(((100-Discount)/100)*RetailPrice).toFixed(2);
+                    // alert(RfProdId);
+                    document.getElementById("{!$Component.ChangedAmountid}").value=amt;
+                    document.getElementById("{!$Component.ChangedDiscountid}").value=Discount;                    
+                }else{
+                    var disc=(((RetailPrice-amount)/RetailPrice)*100).toFixed(2);;
+                    // alert(disc);
+                    document.getElementById("{!$Component.ChangedAmountid}").value=amount;
+                    document.getElementById("{!$Component.ChangedDiscountid}").value=disc;       
+                }
+               document.getElementById("{!$Component.RFQProdId}").value=RfProdId;   
+              }catch(e){
+                  alert(e);
+              }
+              CalculateDiscount();
+          }
+      </script>
+      
+      
+      <!--navbar menu-->
+      <!--navbar menu-->
+      <section class="navbar-info">
+         <div class="head_banner">
+            <nav class="navbar navbar-default navbar-me">
+               <div class="container-fluid ">
+                  <!-- Brand and toggle get grouped for better mobile display -->
+                  <div class="navbar-header">
+                     <a class="navbar-brand site-logo" href="#">
+                        <apex:image url="{!URLFOR($Resource.img, 'img/logo.png')}"/>
+                     </a>
+                  </div>
+               </div>
+            </nav>
+         </div>
+      </section>
+      <div id="main">
+         <div style="width:90%; margin:0 auto;">
+            <div class="row">
+               <div class="title-grid">
+                  <h3>REQUEST FOR QUOTATION</h3>
+               </div>
+               <!--- <div style="border-bottom: 1px dashed #cacaca; text-align: right;  padding: 5px; margin-bottom:10px;">
+                  <a id="edit" class="url-cursor">Edit <i aria-hidden="true" class="fa fa-edit" style="margin-left:8px;"></i></a>
+               </div> -->
+            </div>
+            <apex:inputhidden id="ChangedAmountid" value="{!ChangedAmount}"/>
+            <apex:inputhidden id="ChangedDiscountid" value="{!ChangedDiscount}"/>
+             <apex:inputhidden id="RFQProdId" value="{!RFQProdId}"/>
+            <apex:actionFunction name="CalculateDiscount" action="{!CalculateDiscount}"/>
+            <apex:pageMessages ></apex:pageMessages>
+            <div class="row">
+              
+                    <div id="rfqTable">
+                     <!--bid table start here -->
+                     <table >
+                         <tr>
+                         <td>
+                             <table class="table table-bordered" style="margin-top:20px;" id="myTable">
+                                    <tr>
+                                       <th rowspan="2">Product Name</th>
+                                      <!--- <th rowspan="2">Dealer Price</th> --->
+                                      <th rowspan="2">Retail Price</th>
+                                      <th class="bg-info" colspan="4"><apex:inputcheckbox value="{!BidProductList[0].priority}"/> &nbsp;&nbsp;{!BidProductList[0].CompanyName}</th>
+                                       <!--- <th  colspan="2"><apex:inputcheckbox value="{!BidProductList[0].priority}"/></th>
+                                       <th colspan="2">{!BidProductList[0].priorityvalue}</th> -->
+                                    </tr>
+                                    <!--- <tr>
+                                        <th class="bg-info" colspan="4">{!BidProductList[0].CompanyName}</th>
+                                    </tr> -->
+                                    <tr>  
+                                       <td class="bg-info">Qty.</td>
+                                       <td>Total Retail Price</td>
+                                       <td>Discount %</td>
+                                       <td >&nbsp;&nbsp;Amount</td>
+                                    </tr>
+                                    <tbody>
+                                    <apex:variable var="row" value="{!1}" />
+                                    <apex:repeat value="{!BidProductList[0].BidList}" var="plist">
+                                     <apex:variable var="row" value="{!row+1}" />
+                                       <tr>
+                                          <td>{!plist.productname}</td>
+                                          <!-- <td>2000</td> --->
+                                          <td id="RetailId">{!plist.RetailPrice}</td>
+                                          <td class="bg-info" >{!plist.quantity}</td>
+                                          <td>{!plist.TotalRetailPrice}<apex:inputText id="totalRetailId" value="{!plist.TotalRetailPrice}" style="display:none"/></td>
+                                          <td ><apex:inputtext id="inputdiscount" value="{!plist.Discount}" style="border-color:white;color:black;width:70px;align:center" onchange="UpdateTable('{!$Component.totalRetailId}','{!plist.RFQId}','{!$Component.inputAmount}','{!$Component.inputdiscount}','{!row}',true)"/></td>
+                                          <td><apex:inputtext id="inputAmount" value="{!plist.Amount}" style="border-color:white;color:black;width:90px;align:center" onchange="UpdateTable('{!$Component.totalRetailId}','{!plist.RFQId}','{!$Component.inputAmount}','{!$Component.inputdiscount}','{!row}',false)"/></td>                            
+                                       </tr>                         
+                                       </apex:repeat>
+                                    </tbody>
+                                    <tfoot>
+                                       <td colspan="2"></td>
+                                       <th colspan="3" class="bg-info">Total Amount</th>
+                                       <td >&nbsp;&nbsp;{!BidProductList[0].TotalAmount}</td>
+                                    </tfoot>
+                                 </table>
+                         </td>
+                         <apex:repeat value="{!BidProductList}" var="blist" first="1">
+                             <td>
+                                 <table class="table table-bordered" style="margin-top:20px;" id="myTable">
+                                    <tr>
+                                    <th class="bg-info" colspan="4"><apex:inputcheckbox value="{!blist.priority}"/>&nbsp;&nbsp;{!blist.CompanyName}</th>
+                                      <!--- <th  colspan="2"><apex:inputcheckbox value="{!blist.priority}"/></th>
+                                       <th colspan="2">{!blist.priorityvalue}</th> --->
+                                    </tr>
+                                   <!--- <tr>
+                                        <th class="bg-info" colspan="4">{!BidProductList[0].CompanyName}</th>
+                                    </tr> --->
+                                    <tr>
+                                       <td class="bg-info">Qty.</td>
+                                       <td>Total Retail Price</td>
+                                       <td>Discount %</td>
+                                       <td >&nbsp;&nbsp;Amount</td>
+                                    </tr>
+                                    <tbody>
+                                    <apex:variable var="row" value="{!1}" />
+                                    <apex:repeat value="{!blist.BidList}" var="plist">
+                                     <apex:variable var="row" value="{!row+1}" />
+                                       <tr>
+                                          <td class="bg-info" >{!plist.quantity}</td>
+                                          <td>{!plist.TotalRetailPrice}<apex:inputText id="totalRetailId" value="{!plist.TotalRetailPrice}" style="display:none"/></td>
+                                          <td ><apex:inputtext id="inputdiscount" value="{!plist.Discount}" style="border-color:white;color:black;width:70px;align:center" onchange="UpdateTable('{!$Component.totalRetailId}','{!plist.RFQId}','{!$Component.inputAmount}','{!$Component.inputdiscount}','{!row}',true)"/></td>
+                                          <td><apex:inputtext id="inputAmount" value="{!plist.Amount}" style="border-color:white;color:black;width:90px;align:center" onchange="UpdateTable('{!$Component.totalRetailId}','{!plist.RFQId}','{!$Component.inputAmount}','{!$Component.inputdiscount}','{!row}',false)"/></td>                            
+                                       </tr>                         
+                                       </apex:repeat>
+                                    </tbody>
+                                    <tfoot>
+                                       <th colspan="3" class="bg-info">Total Amount</th>
+                                       <td >&nbsp;&nbsp;{!blist.TotalAmount}</td>
+                                    </tfoot>
+                                 </table>
+                             </td>
+                     </apex:repeat>
+                     </tr>
+                     </table>        
+                     <div style="text-align:right;">
+                        <button class="action-button btn-info btn-size" >Send For Approval</button>
+                        <!--- <button class="action-button btn-primary btn-size" >Submit</button> -->
+                     </div>
+                     <!--bid table end here -->
+                    </div>                                                                                         
+            </div>
+         </div>
+      </div>
+      <a id="back2Top" href="#" title="Go to Top">&#10148;</a>
+      <!--#############################FOOTER SECTION################################--->
+      <section class="footer">
+         <div class="copyright">
+            Copyright © 2018 Philips Professional Display Solutions All Rights Reserved.
+         </div>
+      </section>
+      <!--#############################################################--->        
+   </body>
+   <!-- End Default Content REMOVE THIS -->
+   
+  </apex:form> 
+  
+</apex:page>
+****************************************************apex class******************************************
+public class BidRequestsMMDController {
+    Public List<RFQ_Product__c> rfQproductList{get;set;}
+     public Decimal Amount{get;set;}
+      public Decimal Discount{get;set;}
+    public set<id> productIdset;
+    public Boolean isEditable {get;set;}
+    public Map<id,Decimal> productQty;
+    //public Map<id,Decimal> productQty;
+    public string RFQProdId{get;set;}
+    public Decimal ChangedAmount{get;set;}
+    public Decimal ChangedDiscount{get;set;}
+    public RFQ__c rfObject{get;set;}
+    public Account acc{get;set;}
+    public set<string> duplicateValue;
+    public string DealerId;
+    public string BidId;
+    public set<id> RfqIdSet;
+
+    public BidRequestsMMDController(){     
+     //DealerId=ApexPages.currentPage().getParameters().get('id'); 
+     BidId=ApexPages.currentPage().getParameters().get('id');
+        isEditable = true;
+        rfQproductList=new List<RFQ_Product__c>();
+        productIdset=new set<id>();
+        rfObject=new RFQ__c();
+        //acc=new Account();   
+        RfqIdSet=new set<id>();     
+    }
+    
+    
+    public list<wrapProductPrice> getProductList(){
+         acc=new Account(); 
+         productQty=new  Map<id,Decimal>();
+         system.debug('DealerId=='+DealerId);
+         if(DealerId!=null && DealerId!=''){
+             rfObject=[select id,Total_Amount__c,Contact__r.AccountId from RFQ__c where id=:DealerId];
+             system.debug('rfObject'+rfObject);
+             acc=[select id,name from account where id=:rfObject.Contact__r.AccountId];
+             rfQproductList=[select id,name,Quantity__c,Product__c,Discount__c,Amount__c from RFQ_Product__c where RFQ__c=:rfObject.id order By name Asc limit 50000];
+             system.debug('rfQproductList=='+rfQproductList);
+           for(RFQ_Product__c rfp: rfQproductList){
+               productIdset.add(rfp.Product__c);
+            }
+        }
+        system.debug('set==='+productIdset+'==='+productIdset.size());
+        pricebook2 pb = [select Id from pricebook2 where IsStandard = TRUE][0];
+        Id stPrId = pb.Id;
+        if(productIdset.size()>0){
+            for(product2 p:[select name,Id from product2 where Id IN :productIdset]){
+                for(pricebookentry pbe:[select Product2Id,UnitPrice from pricebookentry where pricebook2Id = :stPrId and product2Id IN :productIdset]){                  
+            system.debug('size=='+productIdset.size());
+                    If((pbe.Product2Id == p.Id)){
+                       if(pbe.CurrencyIsoCode=='EUR'){
+                        system.debug('this is it '+pbe.UnitPrice + '=='+pbe.CurrencyIsoCode);
+                        productQty.put(p.id,pbe.UnitPrice);                        
+                       }     
+                    }
+                }
+            }
+        }
+        system.debug('productQty==='+productQty);
+       list<wrapProductPrice> wraplist=new list<wrapProductPrice>();       
+       if(rfQproductList.size()>0){
+           for(RFQ_Product__c rfp: rfQproductList){ 
+               if(productQty.get(rfp.Product__c)!=null ){
+                   wrapProductPrice wpp=new wrapProductPrice();
+                   wpp.productId=rfp.Product__c;
+                   wpp.productname=rfp.name; 
+                   wpp.RetailPrice=productQty.get(rfp.Product__c);
+                   wpp.quantity=rfp.Quantity__c;
+                   wpp.Discount=rfp.Discount__c;
+                   wpp.Amount=rfp.Amount__c ;
+                   wpp.RFQId=rfp.id ;              
+                   wpp.TotalRetailPrice=(productQty.get(rfp.Product__c))*rfp.Quantity__c;              
+                   wraplist.add(wpp); 
+               }else{
+                    ApexPages.addmessage(new ApexPages.message(ApexPages.severity.Error,'Standard Price is not given'));
+                }
+            }
+        }                 
+       return wraplist;
+    }
+    
+   public class wrapProductPrice{
+       public string productname{get;set;}
+       public string productId{get;set;}
+       public string RFQId{get;set;}
+       public Decimal RetailPrice{get;set;}
+       public Decimal TotalRetailPrice{get;set;}
+       public Decimal quantity{get;set;}
+       public Decimal Discount{get;set;}
+       public Decimal Amount{get;set;}
+   }
+   
+    public void CalculateDiscount(){
+      if(RFQProdId!=null){
+          RFQ_Product__c rfp=[select id,name,Quantity__c,Product__c,Product__r.name,Discount__c,Amount__c from RFQ_Product__c where id=:RFQProdId];
+          if(ChangedAmount!=null)        
+             rfp.Amount__c =ChangedAmount;           
+          if(ChangedDiscount!=null)
+             rfp.Discount__c=ChangedDiscount;
+           update rfp;
+       }
+    }
+    
+    public class Bidwrapper{
+        public String CompanyName{get;set;}
+        public list<wrapProductPrice> BidList{get;set;}
+        public Decimal TotalAmount{get;set;}
+        public boolean priority{get;set;}
+        public Integer priorityvalue{get;set;}
+    }
+    public list<Bidwrapper> getBidProductList(){
+       list<Bidwrapper> Bidwraplist=new list<Bidwrapper>();
+       Integer i=1;
+       for(Bid__c bd:[select id,(select id ,Total_Amount__c,Priority1__c from RFQ_S__r where Priority1__c=true order by createddate asc) from Bid__c where id=:BidId]){
+           for(RFQ__c rf:bd.RFQ_S__r){
+               DealerId=rf.id;
+               list<wrapProductPrice> Rfwraplist=new list<wrapProductPrice>();
+               Rfwraplist=getProductList();
+               Bidwrapper bidw=new Bidwrapper();
+               bidw.CompanyName=acc.name;
+               bidw.BidList=Rfwraplist;
+               bidw.TotalAmount=rf.Total_Amount__c;
+               bidw.priority=rf.Priority1__c;
+               bidw.priorityvalue=i;
+               Bidwraplist.add(bidw);  
+               i++ ;                         
+           }
+       }
+       for(Bid__c bd:[select id,(select id ,Total_Amount__c,Priority1__c from RFQ_S__r where Priority1__c=False order by createddate asc) from Bid__c where id=:BidId]){
+           for(RFQ__c rf:bd.RFQ_S__r){
+               DealerId=rf.id;
+               list<wrapProductPrice> Rfwraplist=new list<wrapProductPrice>();
+               Rfwraplist=getProductList();
+               Bidwrapper bidw=new Bidwrapper();
+               bidw.CompanyName=acc.name;
+               bidw.BidList=Rfwraplist;
+               bidw.TotalAmount=rf.Total_Amount__c;
+               bidw.priority=rf.Priority1__c;
+               bidw.priorityvalue=i;
+               Bidwraplist.add(bidw);  
+               i++;                         
+           }
+       }
+       system.debug('Bidwraplist==='+Bidwraplist);
+      return Bidwraplist;
+    }
+    
+}
