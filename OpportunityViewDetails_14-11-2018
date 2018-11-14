@@ -1,0 +1,282 @@
+<apex:page controller="OpportunityViewDetails_Controller" standardStylesheets="false" showHeader="false" sidebar="false" docType="html-5.0">
+     <apex:form >
+<c:head_include ></c:head_include>
+
+<style>
+.download-center{
+    background-image: url('{!URLFOR($Resource.img, '/img/backgrounds/demo-redquest-banner.jpg')}');
+    height:250px; 
+    min-height:250px; 
+    width:100%; 
+    margin:0; 
+    padding:0;     
+    background-size: cover;
+}
+/* FILE INPUT */
+
+.fileUpload {
+    position: relative;
+    overflow: hidden;
+    margin: 10px;
+    cursor: pointer;
+}
+.fileUpload input.upload {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+    cursor: pointer;
+    opacity: 0;
+    filter: alpha(opacity=0);
+    width:50px;
+}
+
+.cursor a{
+    cursor:pointer;
+    font-size:14px;
+}
+
+.dataTables_filter input[type=search] {
+    border: 1px solid #c7c6c6;
+    height: 30px;
+    border-radius: 3px;
+    width: 250px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+.dataTables_filter optgroup, select{
+    border: 1px solid #c7c6c6;
+    height: 30px;
+    border-radius: 3px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    width:70px;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button{
+    padding: 0.2em 0.6em !important;
+}
+    
+</style>
+
+<body>
+<script>
+$(window).scroll(function() {
+    if($(this).scrollTop()>0) {
+        $( ".navbar-me" ).addClass("fixed-me");
+    } else {
+        $( ".navbar-me" ).removeClass("fixed-me");
+    }
+});
+</script>
+<!--navbar menu-->
+<section>
+    <c:DealerSideMenu ></c:DealerSideMenu>
+</section>
+
+<div id="main">
+    <div style="width:90%; margin:0 auto;">
+        <div class="row" style="min-height:350px;">
+            <div class="row">
+            <div class="title-grid">
+                <h3>My Opportunity Details</h3>
+              <p class="forgotten" style="text-align:right;"><apex:commandLink action="{!RedirectOpp}"><span style="margin-right:5px;"><i class="fa fa-file-text-o"></i></span> Create a new request </apex:commandLink>
+            <span style="margin-left:10px; margin-right:10px; color:#333;">| </span><span class="cursor"><apex:commandLink action="{!RedirectDetailOpp}"><span  style="margin-right:5px;"></span>Go to My Opportunity</apex:commandLink></span></p>
+            </div>
+            </div>
+            <div class="row">
+                  <div class="table-responsive" id="accordion">
+                        <table id="demoRequestTable" class="display table table-bordered" cellspacing="0" style="width:100%; ">
+                                    <tr>
+                                        <td colspan="8"><div id="case-title"><h5>Details</h5></div> </td>
+                                    </tr>                                      
+                                    <apex:repeat value="{!oppList}" var="olist" >                                   
+                                    <tr><td><b>Opportunity Name</b></td><td>{!olist.name}</td>
+                                    <td><b>Stage</b></td><td>{!olist.StageName}</td>
+                                    <td><b>Probability</b></td><td>{!olist.Probability}</td>
+                                     <td><b>Currency Type</b></td><td>{!olist.CurrencyIsoCode}</td>
+                                                            </tr><tr>
+                                    <td><b>Amount</b></td><td>{!olist.Amount}</td>
+                                    <td><b>Type</b></td><td>{!olist.Type}</td>
+                                    <td><b>Close date</b></td><td colspan="3"><apex:outputText value="{0,date,yyyy-MM-dd HH:mm:ss }">
+                                                                  <apex:param value="{!olist.CloseDate}" />
+                                                            </apex:outputText></td>
+                                    </tr>  
+                                    <tr>
+                                        <td colspan="8"><div id="case-title"><h5>Contact Details</h5></div></td>
+                                    </tr>
+                                     <tr><td><b> Name</b></td><td>{!con.FirstName} &nbsp;{!con.lastname}</td>
+                                    <td><b>Email</b></td><td>{!con.Email}</td>
+                                    <td><b>Phone</b></td><td>{!con.Phone }</td>
+                                    <td><b>Mobile</b></td><td>{!con.MobilePhone }</td>
+                                    </tr>
+                                    <tr><td><b> Address</b></td><td colspan="7">{!con.MailingStreet} &nbsp;{!con.MailingCity} &nbsp; {!con.MailingState} &nbsp; {!con.MailingCountry } &nbsp; {!con.MailingPostalCode } </td>
+                                   <!-- <td><b>Email</b></td><td>{!con.email}</td>
+                                    <td><b>phone</b></td><td>{!con.Phone }</td>
+                                    <td><b>Mobile</b></td><td>{!con.MobilePhone }</td> -->
+                                    </tr>
+                                        <tr><td colspan="8">
+                                                <div id="case-title"><h5>Product Details</h5></div>
+                                                <table class="table table-responsive table-bordered  case-summary-table" style="margin-bottom:0px;">                                                                                                      
+                                                    <th style="height:30px;font-size:14px;">Product Name</th>
+                                                    <th style="height:30px;font-size:14px;">Product Family</th>
+                                                    <th style="height:30px;font-size:14px;">Quantity</th>                                                
+                                                    <apex:repeat value="{!olist.OpportunityLineItems}" var="drp" >
+                                                    <tr style="height:30px;font-size:14px;">
+                                                        <td width="25%">{!drp.PricebookEntry.Name}</td>
+                                                        <td width="25%">{!drp.PricebookEntry.Product2.Family}</td>
+                                                        <td width="25%">{!drp.Quantity}</td>
+                                                    </tr>                                   
+                                                    </apex:repeat>                                                    
+                                                </table>
+                                            </td>
+                                        </tr>                 
+                                   </apex:repeat>
+                                
+                             
+                               
+                        </table>
+                    </div>  
+                   
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<a id="back2Top" href="#" title="Go to Top">&#10148;</a>
+
+<!--#############################FOOTER SECTION################################--->
+        <section>
+            <c:portal_footer />
+        </section>
+        <!--#############################################################--->
+<!-- end of navbar-->
+<script>
+/*Scroll to top when arrow up clicked BEGIN*/
+$(window).scroll(function() {
+    var height = $(window).scrollTop();
+    if (height > 100) {
+        $('#back2Top').fadeIn();
+    } else {
+        $('#back2Top').fadeOut();
+    }
+});
+$(document).ready(function() {
+    $("#back2Top").click(function(event) {
+        event.preventDefault();
+        $("html, body").animate({ scrollTop: 0 }, "slow");
+        return false;
+    });
+
+});
+ /*Scroll to top when arrow up clicked END*/
+</script>
+ 
+
+<script>
+/* Nav bar Open Left to Right */
+function openNav() {
+    document.getElementById("mySidenav").style.width = "350px";
+    document.getElementById("main").style.marginRight = "350px";
+    document.body.style.backgroundColor = "rgba(230,230,230,0.4)";
+}
+function closeNav() {
+    document.getElementById("mySidenav").style.width = "0";
+    document.getElementById("main").style.marginRight= "0";
+    document.body.style.backgroundColor = "white";
+}
+</script>
+
+<script>
+var conid = '{!$CurrentPage.parameters.id}';
+
+function gotomyDemo(){
+ window.location.href =  '/apex/DemoRequest?id='+conid;
+
+
+}
+
+</script>
+<script>
+
+$(document).ready(function() {
+    $("div.bhoechie-tab-menu>div.list-group>a").click(function(e) {
+        e.preventDefault();
+        $(this).siblings('a.active').removeClass("active");
+        $(this).addClass("active");
+        var index = $(this).index();
+        $("div.bhoechie-tab>div.bhoechie-tab-content").removeClass("active");
+        $("div.bhoechie-tab>div.bhoechie-tab-content").eq(index).addClass("active");
+        
+    });
+    
+});
+
+</script>
+<script>
+$(document).ready(function() {
+
+    var idfield = '{!$CurrentPage.parameters.id}';
+    console.log('idfield========='+idfield);
+           
+        });          
+</script>
+
+<script type="text/javascript">
+    function reloadPage(){
+        location.reload(true);
+    }
+</script>
+
+<!--Table print FUnction -->
+<script>
+function printData()
+{
+   var divToPrint=document.getElementById("demoRequestTable");
+   newWin= window.open("");
+   newWin.document.write(divToPrint.outerHTML);
+   newWin.print();
+   newWin.close();
+}
+
+$('button').on('click',function(){
+printData();
+})
+
+</script>
+
+</body>
+</apex:form>
+</apex:page>
+//*********************************apex class***************************************************
+public class OpportunityViewDetails_Controller {
+public contact con{get;set;}
+public  list<opportunity > getoppList(){
+        string idd=ApexPages.currentPage().getParameters().get('id');
+        string opid=ApexPages.currentPage().getParameters().get('opid');
+        system.debug('opid=========='+opid);
+        list<opportunity > oplist=new list<opportunity >();
+        oplist=[select id , Name,CurrencyIsoCode,Type,CloseDate,AccountId,Account.name,StageName ,Probability,Amount,(SELECT Quantity, UnitPrice, TotalPrice,PricebookEntry.Name, PricebookEntry.Product2.Family FROM OpportunityLineItems) FROM Opportunity where Contact__c=:idd and id=:opid];      
+        contact conl=new contact();
+        conl=[select LastName,firstName,Email ,Phone ,MobilePhone ,MailingPostalCode ,MailingStreet,MailingCity,MailingState,MailingCountry from contact where AccountId =:oplist[0].AccountId limit 1];
+        if(conl!=null)
+            con=conl;
+        return oplist;
+    }
+    public PageReference RedirectOpp(){
+        string idd=ApexPages.currentPage().getParameters().get('id');
+        PageReference pr=new PageReference('/apex/OpportunityDummy?id='+idd);
+        pr.setRedirect(True);
+        return pr;
+    }
+     public PageReference RedirectDetailOpp(){
+        string idd=ApexPages.currentPage().getParameters().get('id');
+        PageReference pr=new PageReference('/apex/MyOpportunityDummy?id='+idd);
+        pr.setRedirect(True);
+        return pr;
+    }
+}
