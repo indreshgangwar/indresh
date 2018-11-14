@@ -1,0 +1,279 @@
+<apex:page controller="DistributorSubUserListCntrlr_Apex" showheader="false" sidebar="false" id="thePage">
+   <c:head_include ></c:head_include>
+   <style>
+      .download-center{
+      background-image: url('{!URLFOR($Resource.img, '/img/backgrounds/profile-banner.jpg')}');
+      height:200px; 
+      min-height:250px; 
+      width:100%; 
+      margin:0; 
+      padding:0;     
+      background-size: cover;
+      }
+      /* FILE INPUT */
+      .fileUpload {
+      position: relative;
+      overflow: hidden;
+      margin: 10px;
+      cursor: pointer;
+      }
+      .fileUpload input.upload {
+      position: absolute;
+      top: 0;
+      right: 0;
+      margin: 0;
+      padding: 0;
+      font-size: 20px;
+      cursor: pointer;
+      opacity: 0;
+      filter: alpha(opacity=0);
+      width:50px;
+      }
+      .cursor a{
+      cursor:pointer;
+      font-size:14px;
+      }
+      .switch-button{ 
+      padding: 3px 12px!important;
+      height:30px!important;
+      }
+      /*-----------------------*/
+      .switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 25px;
+      }
+      .switch input {display:none;}
+      .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      -webkit-transition: .4s;
+      transition: .4s;
+      }
+      .slider:before {
+      position: absolute;
+    content: "";
+    height: 23px;
+    width: 23px;
+    left: 2px;
+    bottom: 1px;
+      background-color: #fff;
+      -webkit-transition: .4s;
+      transition: .4s;
+      }
+      input:checked + .slider {
+      background-color: #2196F3;
+      }
+      input:focus + .slider {
+      box-shadow: 0 0 1px #2196F3;
+      }
+      input:checked + .slider:before {
+      -webkit-transform: translateX(26px);
+      -ms-transform: translateX(26px);
+      transform: translateX(26px);
+      }
+      /* Rounded sliders */
+      .slider.round {
+      border-radius: 34px;
+      }
+      .slider.round:before {
+      border-radius: 50%;
+      }
+      .url-cursor {
+      cursor: pointer;
+      font-size: 14px;
+
+      }
+      .forgotten a{
+              text-decoration:none;
+      }
+   </style>
+   <body>
+    <script>
+         $(window).scroll(function() {
+             if($(this).scrollTop()>0) {
+                 $( ".navbar-me" ).addClass("fixed-me");
+             } else {
+                 $( ".navbar-me" ).removeClass("fixed-me");
+             }
+         });
+      </script>
+   <section>
+      <c:DealerSideMenu ></c:DealerSideMenu>
+   </section>
+   <apex:form >
+      <div id="main">
+         <div style="width:90%; margin:0 auto;">
+            <div style="min-height:350px;">
+               <div class="row">
+                  <div class="title-grid">
+                     <h3>Other Users</h3>
+                     
+                     
+                     
+                     
+                     <p class="forgotten" style="text-align:right;">
+                           <apex:actionfunction name="AddMoreUser" action="{!RedirectAddMoreUser}" />
+                         <span style="margin-right:5px;"><i class="fa fa-plus-circle" aria-hidden="true"></i></span>
+                              <a class="url-cursor" onclick="AddMoreUser()">Add More User</a>   </p> 
+                     
+                     
+                  </div>
+               </div>
+               <div class="row" style="margin-top:10px;">
+                  <div class="table-responsive" id="accordion">
+                  <apex:variable value="{!0}" var="rownum"/>
+                    <apex:outputPanel id="acc1">
+                     <apex:dataTable value="{!SubUser}" var="sub" id="subUserList" cellspacing="0" styleclass="table table-bordered table-hover"  style="width:100%;">
+                        <apex:column >
+                           <apex:facet name="header"><b>User Name</b></apex:facet>
+                           {!sub.name}
+                        </apex:column>
+                        <apex:column >
+                           <apex:facet name="header"><b>Title</b></apex:facet>
+                           {!sub.Title}
+                        </apex:column>
+                        <apex:column >
+                           <apex:facet name="header"><b>Email</b></apex:facet>
+                           {!sub.Email}
+                        </apex:column>
+                        <apex:column >
+                           <apex:facet name="header"><b>Landline No.</b></apex:facet>
+                           {!sub.MobilePhone}
+                        </apex:column>
+                        <apex:column >
+                           <apex:facet name="header"><b>Mobile No.</b></apex:facet>
+                           {!sub.phone}
+                        </apex:column>
+                        <apex:column >
+                           <apex:facet name="header"><b>Address</b></apex:facet>
+                           {!sub.MailingStreet} {!sub.MailingCity} {!sub.MailingState} {!sub.MailingPostalCode} {!sub.MailingCountry}
+                          </apex:column>  
+                       
+                       
+                        <apex:column style="padding: 4px 0px 0px 10px;">
+                        <apex:facet name="header"><b>User Status</b></apex:facet>                  
+                        <label class="switch" >              
+                        <apex:inputCheckbox value="{!sub.Inactive__c}" styleClass="switch">                      
+                        <apex:actionSupport event="onchange" action="{!changeUserStatus}" rerender="acc1">                              
+                        </apex:actionSupport>
+                        </apex:inputCheckbox>
+                        <span class="slider round"></span></label>                                                      
+                        </apex:column>
+                    
+                    <apex:variable value="{!rownum+1}" var="rownum"/>
+                     </apex:dataTable>
+                     </apex:outputPanel>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <!--#############################FOOTER SECTION################################--->
+      
+      <script>
+/*Scroll to top when arrow up clicked BEGIN*/
+$(window).scroll(function() {
+var height = $(window).scrollTop();
+if (height > 100) {
+    $('#back2Top').fadeIn();
+} else {
+    $('#back2Top').fadeOut();
+}
+});
+$(document).ready(function() {
+$("#back2Top").click(function(event) {
+    event.preventDefault();
+    $("html, body").animate({ scrollTop: 0 }, "slow");
+    return false;
+});
+
+});
+/*Scroll to top when arrow up clicked END*/
+</script>
+
+
+<script>
+/* Nav bar Open Left to Right */
+function openNav() {
+document.getElementById("mySidenav").style.width = "350px";
+document.getElementById("main").style.marginRight = "350px";
+document.body.style.backgroundColor = "rgba(230,230,230,0.4)";
+}
+function closeNav() {
+document.getElementById("mySidenav").style.width = "0";
+document.getElementById("main").style.marginRight= "0";
+document.body.style.backgroundColor = "white";
+}
+</script>
+
+<script>
+$(document).ready(function() {
+$("div.bhoechie-tab-menu>div.list-group>a").click(function(e) {
+    e.preventDefault();
+    $(this).siblings('a.active').removeClass("active");
+    $(this).addClass("active");
+    var index = $(this).index();
+    $("div.bhoechie-tab>div.bhoechie-tab-content").removeClass("active");
+    $("div.bhoechie-tab>div.bhoechie-tab-content").eq(index).addClass("active");
+});
+});
+
+</script>
+      
+      <section>
+         <c:portal_footer />
+      </section>
+      <!--#############################################################--->
+   </apex:form>
+   </body>
+</apex:page>
+*********************************************apex class*************************
+/*
+        Author: Anita
+        Created Date: 31/10/2018
+        Created For: 
+*/
+
+public class DistributorSubUserListCntrlr_Apex {
+
+public List<contact> SubUser{get;set;}
+public Id contactId;
+public Id disRecordTypeId;
+  
+ 
+  public DistributorSubUserListCntrlr_Apex() {
+      disRecordTypeId = Schema.SObjectType.Contact.getRecordTypeInfosByName().get('Sub Dealer').getRecordTypeId();
+      SubUser= new List<contact>();
+      id acid;
+      contactId = ApexPages.currentPage().getParameters().get('Id');
+    
+      Contact con = new Contact();
+      con = [select AccountId  from contact where id =: contactId];   
+   
+      acid = con.AccountId;
+      system.debug('acid=====>'+acid);  
+      SubUser= [select id,Name,AccountId,Title,Email,MobilePhone,phone,MailingAddress,MailingStreet,MailingCity,MailingState,MailingPostalCode,MailingCountry,Inactive__c,RecordTypeId  from contact where AccountId =: acId and RecordTypeId =:disRecordTypeId];
+ 
+  }       
+    
+   public PageReference changeUserStatus() {  
+    update SubUser;
+    return null;         
+    } 
+    
+    
+    public Pagereference RedirectAddMoreUser(){
+    string idfield=ApexPages.currentPage().getParameters().get('id');
+        pagereference pr=new pagereference('/apex/SubUserCreation?id='+idfield);
+        pr.SetRedirect(true);
+        return pr;
+    }  
+ 
+}
