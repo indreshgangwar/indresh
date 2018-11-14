@@ -1,0 +1,183 @@
+<apex:page standardStylesheets="false" showHeader="false" Controller="MyRfqCtrl_Clone">
+<apex:form >
+   <c:head_include ></c:head_include>
+   <c:portal_Script ></c:portal_Script>
+   <!-- End Default Content REMOVE THIS -->
+   <style>
+      .download-center{
+      background-image: url('{!URLFOR($Resource.img, '/img/backgrounds/profile-banner.jpg')}');
+      height:200px; 
+      min-height:250px; 
+      width:100%; 
+      margin:0; 
+      padding:0;     
+      background-size: cover;
+      }
+      /*Footer Styling*/
+      #custom-footer-mmd{
+      background:#0067a4;
+      padding: 55px 14px 30px 14px;
+      margin-top:50px;
+      }
+      .custom-footer{
+      color:#fff;
+      }
+      .footer-logo{
+      text-align:center;
+      padding:10px;
+      }
+      .custom-footer ul
+      {
+      margin: 0px;
+      padding: 0px 0px 0px 2px;
+      margin-bottom: 6px!important;
+      }
+      .custom-footer ul li
+      {
+      list-style-type: none;
+      display: inline-block;
+      background-color: #fff;
+      margin-top: 8px;
+      width: 25px;
+      height: 25px;
+      line-height: 26px;
+      text-align: center;
+      padding: 6px 6px 0px 5px;
+      }
+      .custom-footer ul li a
+      {
+      text-decoration:none;
+      color: #024e8e;
+      font-size:13px !important;
+      }
+      .social ul li {
+      width:30px;
+      }
+      .footer-social{
+      font-size:15px;
+      font-weight:normal;
+      padding: 45px 0px 0px 10px;
+      }
+      .footer-link-list.horizontal {
+      text-align: center;
+      padding: 15px 0px 0px 0px;
+      margin-bottom:6px !important;
+      }
+      .footer-link-list .horizontal ul {
+      text-align: center;
+      background:none;
+      }
+      .footer-link-list.horizontal ul li {
+      width: auto;
+      display: inline-block;
+      float: none;
+      padding-left: 0;
+      border-right: 1px solid #fff;
+      padding-right: 6px;
+      padding-left: 6px;
+      line-height: 14px;
+      }
+      .footer-link-list.horizontal ul li:last-child {
+      border-right: none;
+      }
+      .mmd-copyright{
+      font-size:14px;
+      color:#fff;
+      }
+   </style>
+   <body>
+      <script>
+         $(window).scroll(function() {
+             if($(this).scrollTop()>0) {
+                 $( ".navbar-me" ).addClass("fixed-me");
+             } else {
+                 $( ".navbar-me" ).removeClass("fixed-me");
+             }
+         });
+         </script>        
+      
+      <section>
+         <c:DealerSideMenu ></c:DealerSideMenu>
+      </section>
+      <div id="main">
+         <div style="width:90%; margin:0 auto;">
+            <div class="row" style="min-height:350px;">
+               <div class="title-grid" style="margin-bottom: 30px;">
+                  <h3>My RFQs</h3>
+               </div>
+               <div class="table-responsive" id="accordion">
+                  <table id="rfqTable" class="display table table-bordered" cellspacing="0" style="width:100%; ">
+                     <thead>
+                        <tr style="background: #eee; text-align: left;  font-weight: bold;">
+                           <td class="col-md-1 tex-center">S.No.</td>
+                           <td class="col-md-2 tex-center">RFQ Number</td>
+                           <td class="col-md-2 tex-center">Request for</td>
+                           <td class="col-md-2 tex-center">Client Type</td>
+                           <td class="col-md-1 tex-center">Priority</td>
+                           <td class="col-md-2 tex-center">Expe.Deal Closing Date</td>
+                            <td class="col-md-3 tex-center">&nbsp;</td>
+                      <!--     <td class="col-md-2 tex-center">&nbsp;</td>  -->
+                        </tr>
+                     </thead>
+                     
+                     <apex:variable value="{!0}" var="count"/>
+                                    <apex:repeat value="{!rfqList}" var="rflist">
+                                        <apex:variable value="{!count+1}" var="count"/>
+                                        <tr>
+                                        <td style="text-align: left;" ><span>{!count}</span></td>
+                                        <td style="text-align: left;" ><span>{!rflist.Name}</span></td>
+                                        <td style="text-align: left;"><span>{!rflist.Request_for__c}</span></td>
+                                        <td style="text-align: left;" ><span>{!rflist.Client_Type__c}</span></td>
+                                        <td style="text-align: left;"><span>{!rflist.Priority__c}</span></td>                                                                           
+                                        <td style="text-align: left;"><span>{!rflist.DealClosingDates__c}</span></td>  
+                                        
+                                    <!--    <apex:outputText value="{0,date,yyyy-MM-dd HH:mm:ss }">
+                                                            <apex:param value="{!rflist.DealClosingDates__c}" />
+                                                            </apex:outputText> -->
+                                                                                                 
+                                        <td style="text-align: right; margin-right:10px;" >
+                                            <apex:commandLink action="{!RedirectDetailedrfq}">
+                                            <apex:param name="rfqid" value="{!rflist.id}"/>
+                                                <span>View Details</span>
+                                                <i class="fa fa-chevron-circle-down" style="font-size:16px; margin-left:10px;"> </i>
+                                            </apex:commandLink>
+                                        </td>
+                                        </tr></apex:repeat>
+                     
+                  </table>
+               </div>
+            </div>
+         </div>
+      </div>
+      <!--#############################FOOTER SECTION################################--->
+      <a id="back2Top" href="#" title="Go to Top">&#10148;</a>
+      <section>
+            <c:portal_footer />
+      </section>
+   </body>
+  </apex:form>
+</apex:page>
+**************************************apex class***********************************
+public class MyRfqCtrl_Clone {
+
+
+public MyRfqCtrl_Clone (){
+}
+
+ public  list<RFQ__c> getrfqList(){
+        string idd=ApexPages.currentPage().getParameters().get('id');
+        system.debug('id=========='+idd);
+        list<RFQ__c> rfq=new list<RFQ__c>();
+        rfq=[Select id,Name,Client_Type__c,Contact__c,Deal_Closing_Date__c,Priority__c,DealClosingDates__c,Product__c,Remarks__c,Request_for__c,Total_Amount__c,(select id,name,RFQ__c,Product_Family__c,Product__c,Quantity__c,Amount__c from RFQ_Products__r) from RFQ__c where Contact__c =: idd ORDER BY Name DESC ];
+     return rfq;
+    }
+    
+ public PageReference RedirectDetailedrfq(){
+        string idd=ApexPages.currentPage().getParameters().get('id');
+        id rfqid=ApexPages.currentPage().getParameters().get('rfqid');
+        PageReference pr=new PageReference('/apex/MyRFQDetails?id='+idd);
+        pr.getParameters().put('Rfqid', rfqid);
+        pr.setRedirect(True);
+        return pr;        
+    }
+}
