@@ -1,0 +1,629 @@
+<apex:page standardStylesheets="false" showHeader="false" sidebar="false" docType="html-5.0" controller="BidController_clone" id="pgid">
+   <c:head_include ></c:head_include>
+   <c:portal_Script ></c:portal_Script>
+   <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet" />
+   <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+   <style>
+      .download-center{
+      background-image: url('{!URLFOR($Resource.img, '/img/backgrounds/profile-banner.jpg')}');
+      height:200px; 
+      min-height:250px; 
+      width:100%; 
+      margin:0; 
+      padding:0;     
+      background-size: cover;
+      }
+      /* FILE INPUT */
+      .fileUpload {
+      position: relative;
+      overflow: hidden;
+      margin: 10px;
+      cursor: pointer;
+      }
+      .fileUpload input.upload {
+      position: absolute;
+      top: 0;
+      right: 0;
+      margin: 0;
+      padding: 0;
+      font-size: 20px;
+      cursor: pointer;
+      opacity: 0;
+      filter: alpha(opacity=0);
+      width:50px;
+      }
+      .cursor a{
+      cursor:pointer;
+      font-size:14px;
+      }
+      .switch-button{ 
+      padding: 3px 12px!important;
+      height:30px!important;
+      }
+      .btn-width
+      {
+      width: 150px;
+      }
+     
+      .form-control{
+        height:34px !important;
+        padding: 0 15px !important;
+      }
+      .textarea-height{
+        height:80px !important;
+      }
+   </style>
+   <body>
+      <script>
+         $(window).scroll(function() {
+             if($(this).scrollTop()>5) {
+                 $( ".navbar-me" ).addClass("fixed-me");
+             } else {
+                 $( ".navbar-me" ).removeClass("fixed-me");
+             }
+         });
+      </script>
+      
+      <script type="text/javascript">
+            $(function () {
+            $("#chkPassport").click(function () {
+             if ($(this).is(":checked")) {
+                 $("#dvPassport").show();
+                 $("#AddPassport").hide();
+             } else {
+                 $("#dvPassport").hide();
+                 $("#AddPassport").show();
+             }
+            });
+            });
+         </script>
+         
+      <!--navbar menu-->
+      <section>
+         <c:DealerSideMenu ></c:DealerSideMenu>
+      </section>
+     
+         <div id="main">
+          <apex:form id="frmid" >
+            <div style="width:90%; margin:0 auto;">
+               <div class="row" style="min-height:350px;">
+                  <div class="row">
+                      <div class="title-grid" style="margin-bottom: 30px;">
+                         <h3>Request for Quotation</h3>
+                      </div>
+                  </div>
+                  <!--Request form start -->
+                  <div class="row">
+                     <div class="panel panel-default">
+                        <div class="panel-body" id="case-title">
+                           <div class="form-row form-group " style="margin-right:0; margin-left: 0px;">
+                              <div class="form-group col-md-3 col-sm-6">
+                                 <label for="Request for"> Request for</label>
+                                 <apex:selectList value="{!Requestfor}" size="1" multiselect="false"  styleClass="form-control" id="req1">
+                                    <apex:selectOptions value="{!RequestforList}">
+                                    </apex:selectOptions>
+                                 </apex:selectList>
+                                 <!-- <select class="form-control">
+                                    <option value="individual">Individual</option>
+                                    <option value="commercial">Commercial</option>
+                                    </select>-->
+                              </div>
+                              <div class="form-group col-md-3 col-sm-6">
+                                 <label for="Priority"> Priority </label>
+                                 <apex:selectList value="{!Priority}" size="1" multiselect="false"  styleClass="form-control" id="pr1">
+                                    <apex:selectOptions value="{!PriorityList}">
+                                    </apex:selectOptions>
+                                 </apex:selectList>
+                                 <!--<select class="form-control">
+                                    <option value="Low">Low</option>
+                                    <option value="Medium">Medium</option>
+                                    <option value="High">High</option>
+                                    </select>-->
+                              </div>
+                              <div class="form-group col-md-3 col-sm-6">
+                                 <label for="client">Client</label>
+                                 <apex:selectList value="{!Client}" size="1" multiselect="false"  styleClass="form-control" id="cl1">
+                                    <apex:selectOptions value="{!ClientList}">
+                                    </apex:selectOptions>
+                                 </apex:selectList>
+                                 <!--<select class="form-control selector">
+                                    <option value="New client">New client</option>
+                                    <option value="Existing client">Existing client</option>
+                                    </select>-->
+                              </div>
+                              <div class="form-group col-md-3 col-sm-6">
+                                 <label>Expected Deal Closing Date  </label>
+                                 <apex:input styleclass="form-control" type="date" value="{!DealClosingDate}" id="date1"  />
+                                 <!--<input type="date" class="form-control" placeholder="Choose" />-->
+                              </div>
+                           </div>
+                           <h5>Add  Product Description</h5>
+                           <!--product add table start -->
+                            <div class="table-responsive">
+                         <!--   <div class="form-row ">  
+                                        <div class="col-md-12">  -->
+                                        
+                                        <apex:outputPanel id="ProdTabId">
+                                        
+                                            <table class="table table-bordered case-summary-table" id="ProductAddTable" >
+                                             <tbody>
+                                                <apex:variable var="count" value="{!0}"   />
+                                                <apex:repeat value="{!allProductList}" var="apList" id="TABLIST">
+                                                   <tr id="tr1">
+                                                      <td class="col-md-1">
+                                                      <apex:inputCheckbox id="myCheck"  style="margin: 11px 0px 0px 15px;"><apex:actionSupport event="onclick" reRender="none"  action="{!checkFunction}"><apex:param name="checkboxcheck" value="{!count}"/></apex:actionSupport></apex:inputCheckbox>
+                                                      <!--   <input type="checkbox" id="myCheck" name="chk" style="margin: 11px 0px 0px 15px;"  onclick="myCheckFunction({!count})"/>  -->
+                                                      </td>
+                                                      <td class="col-md-4" id="tdx1">
+                                                         <apex:selectList value="{!apList.selectedproductFamily}" size="1" multiselect="false" styleClass="form-control" id="hav7"  >
+                                                            <apex:selectOptions value="{!apList.productFamily}"  >
+                                                            </apex:selectOptions>
+                                                            <apex:actionSupport event="onchange" action="{!WrapProductlist}" reRender="i12">
+                                                               <apex:param name="windex" value="{!count}" assignTo="{!wrapIndex}"/>
+                                                            </apex:actionSupport>
+                                                         </apex:selectList>
+                                                      </td>
+                                                      <td class="col-md-4 tdxxx" id="td1">
+                                                         <apex:outputPanel id="i12">
+                                                            <apex:selectList value="{!apList.selectedProd}" size="1" multiselect="false" styleClass="form-control">
+                                                               <apex:selectOptions id="oppid" value="{!apList.product}"  />
+                                                            </apex:selectList>
+                                                         </apex:outputPanel>
+                                                      </td>
+                                                      <td class="col-md-3" id="qty1">
+                                                         <apex:input type="text" styleClass="form-control" value="{!apList.productInfoquantity}" html-placeholder="Qty."/>
+                                                      </td>
+                                                   </tr>
+                                                   <apex:variable value="{!count+1}" var="count"/>
+                                                </apex:repeat>
+                                             </tbody>
+                                          </table>
+                                        <div class="">
+                                             <apex:outputPanel >
+                                                <span  class="cursor"><i class="fa fa-plus-circle" style="font-size:25px;color:#0565cc;" title="Add Product"></i> </span>
+                                                <apex:actionSupport event="onclick" action="{!addproductrow}" reRender="ProdTabId"/>
+                                             </apex:outputPanel>
+                                             <apex:outputPanel >
+                                                <span  class="cursor"><i class="fa fa-times-circle" style="font-size:25px;color:#d81712;" title="Delete Product"></i></span>
+                                                <apex:actionSupport event="onclick" action="{!DelProductRow}" reRender="ProdTabId"/>
+                                             </apex:outputPanel>
+                                          </div>
+                                         </apex:outputPanel>
+                                      <!--   </div>  -->
+                                    </div>
+                                  
+                            <!-- Product Add Table Close Here-->        
+                           
+                           <div class="form-row form-group ">
+                              <div class="checkbox">
+                                 <label><input type="checkbox" value="" id="chkPassport" />Do you want to register this project for special bid?</label><br/>
+                              </div>
+                           </div>
+                           <!--client details form start -->
+                           <div class=" table-section" id="dvPassport" style="display:none;">
+                              <h5>Add  Client Details</h5>
+                              
+                              <!--row one start edited by suman 22-Sep-2018 -->
+                               <div class="form-row form-group ">
+                                  <div class="form-group col-md-3 col-sm-6">
+                                     <label>Client Type</label>
+                                     <apex:selectList value="{!ClientType}" size="1" multiselect="false"  styleClass="form-control" id="clt1">
+                                        <apex:selectOptions value="{!ClientTypeList}">
+                                        </apex:selectOptions>
+                                     </apex:selectList>
+                                  </div>
+                                  <div class="form-group col-md-3 col-sm-6">
+                                     <label>Client Name</label>
+                                     <apex:inputtext styleclass="form-control" value="{!ContactInfo}" id="contactinfo" html-placeholder="Client Name" />
+                                  </div>
+                                  <div class="form-group col-md-3 col-sm-6">
+                                     <label>Contact Name</label>
+                                     <apex:inputtext styleclass="form-control" value="{!ClientInfo}" id="Clienttinfo" html-placeholder="Contact Name" />
+                                  </div>
+                                  <div class="form-group col-md-3 col-sm-6">
+                                     <label>Mobile No</label>
+                                     <apex:inputtext styleclass="form-control" value="{!MobileNo}" id="MobileNo" html-placeholder="Mobile No" />
+                                  </div>
+                              </div>
+                              <!--row one end-->
+                              
+                              <!--row two start here -->
+                              <div class="form-row form-group ">
+                                  <div class="form-group col-md-3 col-sm-6">
+                                     <label>Phone No</label>
+                                     <apex:inputtext styleclass="form-control" value="{!PhoneNo}" id="PhoneNo" html-placeholder="Phone No" />
+                                  </div>
+                                  <div class="form-group col-md-3 col-sm-6">
+                                     <label> Email Address</label>
+                                     <apex:inputtext styleclass="form-control" value="{!Email}" id="EmailId" html-placeholder="Email" />
+                                  </div>
+                                  <div class="form-group col-md-6 col-sm-6">
+                                     <label>Street</label>
+                                     <apex:inputtext styleclass="form-control" value="{!Street}" id="strt" html-placeholder=" Street" />
+                                  </div>
+                                  
+                              </div>
+                              <!--row two End here -->
+                              
+                              <!--row Three start here -->
+                              <div class="form-row form-group ">
+                                     <div class="form-group col-md-3 col-sm-6">
+                                        <label>City</label>
+                                        <apex:inputtext styleclass="form-control" value="{!City}" id="cityId" html-placeholder=" City" />
+                                     </div>
+                              
+                                      <div class="form-group col-md-3 col-sm-6">
+                                         <label>County / State</label>
+                                         <apex:inputtext styleclass="form-control" value="{!CountyState}" id="stateId" html-placeholder="County / State" />
+                                      </div>
+                                      <div class="form-group col-md-3 col-sm-6">
+                                         <label>Postcode / Zipcode</label>
+                                         <apex:inputtext styleclass="form-control" value="{!PostcodeZipcode}" id="postcodeId" html-placeholder="Postcode / Zipcode" />
+                                      </div>
+                                      <div class="form-group col-md-3 col-sm-6">
+                                         <label>Country</label>
+                                         <apex:inputtext styleclass="form-control" value="{!Country}" id="cntryId" html-placeholder="Country" />
+                                      </div>
+                              </div>
+                              <!--row Three start here -->
+                           </div>
+                           <!--client details form end -->
+                           <div class="form-row form-group " style="margin-right:0; margin-left: 0px;">
+                              <div class="form-group ">
+                                 <label for="Remarks">Remarks (if any)</label>
+                                 <apex:inputTextarea styleclass="form-control textarea-height" rows="4"  value="{!Remarks}" id="remrk1" />
+                              </div>
+                              <div class="panel-footer">                                                            
+                        <apex:commandButton value="Submit Request" action="{!save}" styleClass="action-button btn-primary btn-width" style=" margin: 10px 15px 10px 0px;" />
+                             
+                <!--    <button type="button" class="action-button btn-info btn-width" onclick="demorequest()" >Submit Request</button>   -->
+
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+                  <!--Request form close -->
+               </div>
+            </div>        
+        
+        <a id="back2Top" href="#" title="Go to Top">&#10148;</a>         
+         </apex:form>
+          </div>
+         <!--#############################FOOTER SECTION################################--->
+         <section class="footer">
+            <div class="copyright">
+               Copyright © 2018 Philips Professional Display Solutions All Rights Reserved.
+            </div>
+         </section>
+         <!--#############################################################--->
+          <!--###SCRIPT FOR TABLE ADD ROW#########-->
+      <script>
+         function changedpicklistlist(k){
+             document.getElementById('{!$Component.wrInId}').value=k;
+             changedlist();
+         }
+         function changequantity(k,quant){
+             
+            // alert('k=='+k);
+             try{
+             document.getElementById('{!$Component.wrInId}').value=k;
+             document.getElementById('{!$Component.quant2}').value=quant;
+             }catch(e){
+                 alert(e);
+             }
+         }
+      </script>
+         
+         
+         
+    
+   </body>
+</apex:page>
+***********************************apex class***********************************
+/*--------------
+Code created date : 21/09/2018
+------------------------*/
+
+public class BidController_clone {
+    
+    public Id contactId;
+/*-------------- Fields to be mapped ---------------*/
+//RFQ
+public list<selectOption> RequestforList {get;set;}
+public string Requestfor{get;set;}
+public list<selectOption> PriorityList {get;set;}
+public string Priority{get;set;}
+public list<selectOption> ClientList {get;set;}
+public string Client{get;set;}
+public Date DealClosingDate{get;set;}
+public String Remarks {get;set;}
+
+
+//Client Detail
+public String Street {get;set;}
+public String City {get;set;}
+public String PostcodeZipcode {get;set;}
+public String CountyState {get;set;}
+public String Country {get;set;}
+public String ContactInfo {get;set;}
+public String ClientInfo {get;set;}
+public String MobileNo {get;set;}
+public String PhoneNo {get;set;}
+public String Email{get;set;}
+public list<selectOption> ClientTypeList {get;set;}
+public string ClientType{get;set;}
+
+public RFQ__c RFQ {get;set;}
+public Client_Detail__c clt {get;set;}
+
+//variable declaration for Prouct Info
+  public list<selectOption> selectProductList {get;set;}
+  public string selectProduct{get;set;}
+  public list<selectOption> selectProdList {get;set;}
+  public string selectedProd{get;set;}
+  public list<selectOption> ProductFamilyList {get;set;}
+  public string ProductFamily{get;set;}
+  public Integer wrapIndex{get;set;}
+  public list<allProducts> allProductList{get;set;}
+  public Integer wquant2{get;set;}
+
+//creating set for checkbox 
+  public Set<Integer> selectcheckbox;
+
+
+public BidController_clone (){
+     contactId = ApexPages.currentPage().getParameters().get('Id');   
+     
+    selectcheckbox = new Set<Integer>(); 
+       allProductList=new list<allProducts>();
+       addproductrow(); 
+
+              RequestforList = new List<selectOption>();
+
+                Schema.DescribeFieldResult fieldResult1 = RFQ__c.Request_for__c.getDescribe();
+                RequestforList.add(new SelectOption('–None–','–None–'));
+                List<Schema.PicklistEntry> cou1 = fieldResult1.getPicklistValues();
+                for( Schema.PicklistEntry f : cou1)
+                {
+                  RequestforList.add(new SelectOption(f.getLabel(), f.getValue()));
+                }   
+                
+                
+                PriorityList = new List<selectOption>();
+
+                Schema.DescribeFieldResult fieldResult2 = RFQ__c.Priority__c.getDescribe();
+                PriorityList.add(new SelectOption('–None–','–None–'));
+                List<Schema.PicklistEntry> cou2 = fieldResult2.getPicklistValues();
+                for( Schema.PicklistEntry f : cou2)
+                {
+                  PriorityList.add(new SelectOption(f.getLabel(), f.getValue()));
+                }   
+                
+                
+                ClientList = new List<selectOption>();
+
+                Schema.DescribeFieldResult fieldResult3 = RFQ__c.Client_Type__c.getDescribe();
+                ClientList.add(new SelectOption('–None–','–None–'));
+                List<Schema.PicklistEntry> cou3 = fieldResult3.getPicklistValues();
+                for( Schema.PicklistEntry f : cou3)
+                {
+                  ClientList.add(new SelectOption(f.getLabel(), f.getValue()));
+                } 
+
+                ClientTypeList = new List<selectOption>();
+
+                Schema.DescribeFieldResult fieldResult4 = Client_Detail__c.Type__c.getDescribe();
+                ClientTypeList.add(new SelectOption('–None–','–None–'));
+                List<Schema.PicklistEntry> cou4 = fieldResult4.getPicklistValues();
+                for( Schema.PicklistEntry f : cou4)
+                {
+                  ClientTypeList.add(new SelectOption(f.getLabel(), f.getValue()));
+                } 
+                
+            ProductFamilyList = new List<selectOption>();
+
+                Schema.DescribeFieldResult fieldResult3111 = Product2.Family.getDescribe();
+                ProductFamilyList.add(new SelectOption('–None–','–None–'));
+                List<Schema.PicklistEntry> cou3111 = fieldResult3111.getPicklistValues();
+                for( Schema.PicklistEntry f : cou3111)
+                {
+                  ProductFamilyList.add(new SelectOption(f.getLabel(), f.getValue()));
+                }   
+         
+RFQ = new RFQ__c ();
+clt = new Client_Detail__c ();   
+         
+    
+}
+
+   
+  
+    public pageReference save(){
+        
+           //Insertion of RFQ Detail Object data start
+           RFQ__c  rfq = new RFQ__c();
+           rfq.Request_for__c = RequestFor;
+           rfq.Remarks__c  = Remarks;
+           rfq.Priority__c = Priority;
+           rfq.Client_Type__c = Client;
+           rfq.Contact__c =  contactId;
+           rfq.Deal_Closing_Date__c = DealClosingDate;
+           insert rfq;
+           
+           //Insertion of Client Detail Object data start
+        if(ContactInfo!=null && ContactInfo!=''){
+            Client_Detail__c cd = new Client_Detail__c();
+            cd.RFQ__c = rfq.id;
+            cd.Type__c = ClientType;
+            cd.Name   = ContactInfo;
+            cd.Contact_Name__c = ClientInfo;
+            cd.MobileNo__c = MobileNo;
+            cd.Phone_No__c = PhoneNo;
+            cd.Email_Address__c= Email;
+            cd.Street__c= Street;
+            cd.City__c=City;
+            cd.State__c = CountyState;
+            cd.PostCode__c=PostcodeZipcode;
+            cd.Country__c=Country;
+            insert cd;
+            if(cd.id!=null){
+                rfq.Priority1__c=true;
+                update rfq;
+            }
+          }  
+       //Insertion of the RFQ products start
+       
+    List<RFQ_Product__c> allReqProducts = new List<RFQ_Product__c>();
+   
+   for(allProducts allp : allProductList){
+             for(Product2 p2 : [select id ,Name,Family,Active__c from Product2 where Name =:allp.selectedProd])
+             {
+   
+       
+            RFQ_Product__c RfqProduct = new RFQ_Product__c();
+            RfqProduct.Name = p2.Name;
+            RfqProduct.Product_Family__c = allp.selectedproductFamily; 
+            RfqProduct.Quantity__c = Decimal.valueof(allp.productInfoquantity); 
+            RfqProduct.RFQ__c = rfq.Id;
+            RfqProduct.Product__c = p2.Id;
+            allReqProducts.add(RfqProduct);
+         
+    } 
+   }
+    if(allReqProducts.size()>0)
+        insert allReqProducts;
+    try{
+        createBid(rfq.id);
+    }catch(exception e){} 
+   
+    PageReference page =  new PageReference('/apex/MyRfq?id='+contactId);
+    page.setRedirect(true);
+    return page; 
+    }
+   
+   
+   public list<SelectOption> ProdFamilyList(){
+        ProductFamilyList = new List<selectOption>();
+        ProductFamilyList.add(new SelectOption('', 'Please Select'));
+        Schema.DescribeFieldResult fieldResult3111 = Product2.Family.getDescribe();
+        List<Schema.PicklistEntry> cou3111 = fieldResult3111.getPicklistValues();
+        for( Schema.PicklistEntry f : cou3111){
+          ProductFamilyList.add(new SelectOption(f.getLabel(), f.getValue()));
+        } 
+        return ProductFamilyList;
+     }  
+     
+  //Use of Wrapper class
+  public class allProducts {
+  public list<selectOption> productFamily{get;set;}
+  public list<selectOption> product{get;set;}
+  public Integer quantity{get;set;}
+  public String selectedproductFamily{get;set;}
+  public String selectedProd{get;set;}
+  public integer WrapperIndex{get;set;}
+ public string productInfoquantity{get;set;}
+}
+   public void WrapProductlist(){
+         string pp=apexpages.currentpage().getparameters().get('windex');
+         system.debug('wrapIndex======'+wrapIndex);
+         allProductList[wrapIndex].product=getListProduct();
+     }
+     
+     public void Wrapuantity(){
+         system.debug('1=='+allProductList[wrapIndex].quantity);
+        allProductList[wrapIndex].quantity=wquant2;
+        system.debug('2=='+allProductList[wrapIndex].quantity);
+     }
+     
+     Public list<SelectOption> getListProduct(){  
+        selectProductList= new List<selectOption>();
+        if(allProductList[wrapIndex].selectedproductFamily!=''){
+             system.debug('productstrin family'+allProductList[wrapIndex].selectedproductFamily);
+             for(Product2 p2 : [select id ,Name,Family,Active__c from Product2 where Family =:allProductList[wrapIndex].selectedproductFamily and Active__c != False])
+             {
+                  selectProductList.add(new SelectOption(p2.name, p2.name));
+             }
+         }
+         return selectProductList;
+     }
+
+  public void DelProductRow(){
+          Integer k = allProductList.size();                      
+          for(Integer i=k-1;i>0;i--){
+              if(selectcheckbox.contains(i)){
+               allProductList.remove(i);
+                selectcheckbox.remove(i);
+                system.debug('selectcheckbox---i='+selectcheckbox);
+              }
+          
+
+          }
+        system.debug('===allProductList=='+allProductList);  
+    }
+
+  public void addproductrow()
+{
+   allProducts ap= new allProducts(); 
+   ap.productFamily=ProdFamilyList();  
+   allProductList.add(ap); 
+    }
+ 
+  public void checkFunction(){    
+   system.debug('hello');
+      string pp=apexpages.currentpage().getparameters().get('checkboxcheck');
+      system.debug('pp---='+pp);  
+      selectcheckbox.add( Integer.valueof(pp));      
+      system.debug('selectcheckbox---1='+selectcheckbox);  
+     } 
+ 
+ 
+ public Static  void createBid(string InsertedRFG){
+     set<id> rfqid=new set<id>();
+     set<string> newproductnameset=new set<string>();
+     set<id> BidId=new set<id>();
+     string BidDescription;
+     if(InsertedRFG!=null && InsertedRFG!=''){
+        for(RFQ__c rf:[select id,Total_Amount__c,Contact__r.AccountId,(select id,name,Product__c,Quantity__c,Product__r.name from RFQ_Products__r) from RFQ__c where id=:InsertedRFG]){
+             system.debug(rf.RFQ_Products__r);       
+             for(RFQ_Product__c rfp:rf.RFQ_Products__r){
+                 newproductnameset.add(rfp.name);
+                 if(BidDescription!='' && BidDescription!=null){
+                     BidDescription+=','+rfp.name;                                      
+                 }else{
+                     BidDescription=rfp.name;                
+                 }
+             }   
+            rfqid.add(rf.id); 
+         } 
+        for(RFQ__c rf:[select id,Total_Amount__c,Bid__c,Contact__r.AccountId,(select id,name,Product__r.name,Quantity__c from RFQ_Products__r) from RFQ__c where id NOT IN:(rfqid)]){   
+            set<string> prdocutname=new set<string>();
+            for(RFQ_Product__c rfp:rf.RFQ_Products__r){           
+                prdocutname.add(rfp.name);
+            }       
+            if(prdocutname.containsAll(newproductnameset)==True && prdocutname.size()==newproductnameset.size() && rf.Bid__c==null){
+                rfqid.add(rf.id); 
+            }else if(prdocutname.containsAll(newproductnameset)==True && prdocutname.size()==newproductnameset.size() && rf.Bid__c!=null){
+               BidId.add(rf.Bid__c); 
+            }
+        }
+        list<RFQ__c> rflist=new list<RFQ__c>();
+        if(rfqid.size()>0 ){
+            Bid__c bd=new Bid__c();
+            if(BidId.size()==0){
+                bd.Description__c=BidDescription;
+                insert bd;
+            }else{
+                bd=[select id from Bid__c where id In:BidId];
+             }   
+            for(RFQ__c rf:[select id,Bid__c from RFQ__c where id IN:rfqid]){
+                rf.Bid__c=bd.id;                
+                rflist.add(rf);
+            } 
+        }
+            if(rflist.size()>0)
+                update rflist;     
+     }
+  }
+ 
+}
