@@ -1,0 +1,238 @@
+<apex:page standardStylesheets="false" showHeader="false" controller="MyRFQDetailscntrl_Clone">
+    <apex:form >
+   <c:head_include ></c:head_include>
+   <c:portal_Script ></c:portal_Script>
+   <!-- End Default Content REMOVE THIS -->
+   <style>
+      .download-center{
+      background-image: url('{!URLFOR($Resource.img, '/img/backgrounds/profile-banner.jpg')}');
+      height:200px; 
+      min-height:250px; 
+      width:100%; 
+      margin:0; 
+      padding:0;     
+      background-size: cover;
+      }
+      /*Footer Styling*/
+      #custom-footer-mmd{
+      background:#0067a4;
+      padding: 55px 14px 30px 14px;
+      margin-top:50px;
+      }
+      .custom-footer{
+      color:#fff;
+      }
+      .footer-logo{
+      text-align:center;
+      padding:10px;
+      }
+      .custom-footer ul
+      {
+      margin: 0px;
+      padding: 0px 0px 0px 2px;
+      margin-bottom: 6px!important;
+      }
+      .custom-footer ul li
+      {
+      list-style-type: none;
+      display: inline-block;
+      background-color: #fff;
+      margin-top: 8px;
+      width: 25px;
+      height: 25px;
+      line-height: 26px;
+      text-align: center;
+      padding: 6px 6px 0px 5px;
+      }
+      .custom-footer ul li a
+      {
+      text-decoration:none;
+      color: #024e8e;
+      font-size:13px !important;
+      }
+      .social ul li {
+      width:30px;
+      }
+      .footer-social{
+      font-size:15px;
+      font-weight:normal;
+      padding: 45px 0px 0px 10px;
+      }
+      .footer-link-list.horizontal {
+      text-align: center;
+      padding: 15px 0px 0px 0px;
+      margin-bottom:6px !important;
+      }
+      .footer-link-list .horizontal ul {
+      text-align: center;
+      background:none;
+      }
+      .footer-link-list.horizontal ul li {
+      width: auto;
+      display: inline-block;
+      float: none;
+      padding-left: 0;
+      border-right: 1px solid #fff;
+      padding-right: 6px;
+      padding-left: 6px;
+      line-height: 14px;
+      }
+      .footer-link-list.horizontal ul li:last-child {
+      border-right: none;
+      }
+      .mmd-copyright{
+      font-size:14px;
+      color:#fff;
+      }
+   </style>
+   <body>
+      <script>
+         $(window).scroll(function() {
+             if($(this).scrollTop()>0) {
+                 $( ".navbar-me" ).addClass("fixed-me");
+             } else {
+                 $( ".navbar-me" ).removeClass("fixed-me");
+             }
+         });
+      </script>
+      
+   <!--    <script>
+         $(document).ready(function(){
+         var conid = '{!$CurrentPage.parameters.id}';
+         var rfqid = '{!$CurrentPage.parameters.rfqid}';
+          console.log('rfqid============'+rfqid);
+           Visualforce.remoting.Manager.invokeAction(
+            '{!$RemoteAction.MyRFQDetailscntrl_Clone.rfqreturn}',conid,rfqid,
+           function(result,event){
+           console.log('result============'+result);
+            if(event.status){
+             $.each(result,function(index,i){
+             var Name = i.Name;
+             console.log('Name======'+Name);
+            document.getElementById("user").value=Name;
+             var dealclosingdate = i.DealClosingDates__c;
+             console.log('dealclosingdate==================='+i.DealClosingDates__c);
+             str = dealclosingdate.substring(0, dealclosingdate.length - 1);
+             
+             $("#rfqTable").append('<tr><th class="col-md-1 col-lg-1">Request for</th><td class="col-md-2 col-lg-2">'+i.Request_for__c+'</td><th class="col-md-1 col-lg-1">Client Type</th><td class="col-md-2 col-lg-2">'+i.Client_Type__c+'</td><th class="col-md-1 col-lg-1">Priority</th><td class="col-md-1 col-lg-1">'+i.Priority__c+'</td><th class="col-md-2 col-lg-2">Expe.Deal Closing Date</th><td class="col-md-2 col-lg-2">'+str+'</td></tr><tr><th colspan="2">RFQ Title</th><td colspan="6">'+i.Remarks__c+'</td></tr>').html()
+         
+              });
+             }
+           },{escape:true}
+        
+           );
+         });
+         
+      </script>  -->
+      
+      <section>
+         <c:DealerSideMenu ></c:DealerSideMenu>
+      </section>
+      <div id="main">
+         <div style="width:90%; margin:0 auto;">
+            <div class="row" style="min-height:350px;">
+               <div class="title-grid" style="margin-bottom: 30px;">
+                  <h3>RFQ's Details</h3>
+               </div>
+          
+            <div class="table-responsive">
+              <table id="rfqTable" class="display table table-bordered" cellspacing="0" style="width:100%; ">
+                 <apex:repeat value="{!RfqviewList}" var="rflist">  
+                   
+              <div id="case-title">
+                <h5>RFQ Number:-<span style="border: none; color: #5d5d5d;">{!rflist.Name}</span></h5>
+              </div> 
+                 
+                 <tr>
+                   <td class="col-md-1 col-lg-1"><b>Request for</b></td><td class="col-md-2 col-lg-2">{!rflist.Request_for__c}</td>
+                   <td class="col-md-1 col-lg-1"><b>Client Type</b></td><td class="col-md-2 col-lg-2">{!rflist.Client_Type__c}</td>
+                   <td class="col-md-1 col-lg-1"><b>Priority</b></td><td class="col-md-1 col-lg-1">{!rflist.Priority__c}</td>
+                   <td class="col-md-2 col-lg-2"><b>Expe.Deal Closing Date</b></td><td class="col-md-2 col-lg-2">{!rflist.DealClosingDates__c}</td>
+                  </tr>
+                  <tr>
+                  <td colspan="2"><b>RFQ Title</b></td><td colspan="6">{!rflist.Remarks__c}</td>
+                  </tr>                                
+              </apex:repeat> 
+             </table>
+           </div>
+               
+               <div id="case-title">
+                    <h5>Product Details</h5>
+               </div>
+               
+              <table class="table table-hover table-bordered " id="demoProductList">  
+            <thead>
+               <tr>
+                  <th class="col-md-1">S.No</th>
+                  <th>Product Family</th>
+                  <th>Product Name</th>
+                  <th class="col-md-1">Qty.</th>
+               </tr>
+               <apex:variable value="{!0}" var="count"/>
+               <apex:repeat value="{!caseviewList}" var="clist">  
+               <apex:variable value="{!count+1}" var="count"/>
+               <tr>
+               <td>{!count}</td>
+               <td style="text-align: left;" ><span>{!clist.Product_Family__c}</span></td>
+               <td style="text-align: left;" ><span>{!clist.Name}</span></td>
+               <td style="text-align: left;" ><span>{!clist.Quantity__c}</span></td>
+               </tr>
+               </apex:repeat>
+            </thead>
+            
+         </table>
+               
+            </div>
+         </div>
+      </div>
+      <!--#############################FOOTER SECTION################################--->
+      <a id="back2Top" href="#" title="Go to Top">&#10148;</a>
+      <section>
+          <c:portal_footer />
+      </section>
+   </body>
+   </apex:form>
+</apex:page>
+public class MyRFQDetailscntrl_Clone {
+  
+
+public MyRFQDetailscntrl_Clone (){
+}
+
+/*@RemoteAction
+ Public Static list<RFQ__c> rfqreturn(string idd,string rfqid)
+ {
+ list<RFQ__c> rfq = [Select id,Name,Client_Type__c,Contact__c,Deal_Closing_Date__c,Priority__c,DealClosingDates__c,Product__c,Remarks__c,Request_for__c,Total_Amount__c,(select id,name,RFQ__c,Product_Family__c,Product__c,Quantity__c,Amount__c from RFQ_Products__r) from RFQ__c where  id=:  rfqid];
+  return rfq; 
+
+ } */
+ 
+ /*  public  list<RFQ__c> getRfqviewList(){
+        string Contactid =ApexPages.currentPage().getParameters().get('id');
+        string idd=ApexPages.currentPage().getParameters().get('rfqid');
+        system.debug('id=========='+idd);
+        list<RFQ__c> rfq = new list<RFQ__c>();        
+         rfq = [Select id,Name, Client_Type__c,Contact__c,Deal_Closing_Date__c, Priority__c,DealClosingDates__c, Product__c,Remarks__c,Request_for__c,Total_Amount__c from RFQ__c where Contact__c=:Contactid limit 1];
+       
+        return rfq;
+    } */
+ 
+   public  list<RFQ_Product__c> getcaseviewList(){
+        string idd=ApexPages.currentPage().getParameters().get('rfqid');
+        system.debug('id=========='+idd);
+        list<RFQ_Product__c> cas = new list<RFQ_Product__c>();        
+         cas = [select id,name,RFQ__c,Product_Family__c,Product__c,Quantity__c,Amount__c from RFQ_Product__c where RFQ__c=:idd ORDER BY CreatedDate Asc limit 50000];
+         //system.debug('cas==========='+cas[0].Demo_Request_products__r); 
+        return cas;
+    } 
+    
+    public  list<RFQ__c> getRfqviewList(){
+        string Contactid =ApexPages.currentPage().getParameters().get('id');
+        string idd=ApexPages.currentPage().getParameters().get('rfqid');
+        system.debug('id=========='+idd);
+        list<RFQ__c> rfq = [Select id,Name,Client_Type__c,Contact__c,Deal_Closing_Date__c,Priority__c,DealClosingDates__c,Product__c,Remarks__c,Request_for__c,Total_Amount__c,(select id,name,RFQ__c,Product_Family__c,Product__c,Quantity__c,Amount__c from RFQ_Products__r ORDER BY CreatedDate Asc limit 50000) from RFQ__c where Contact__c=:Contactid limit 1];
+       
+        return rfq;
+    }
+}
+************************************apex class**************************************
