@@ -1,0 +1,284 @@
+<apex:page controller="AllCasescontroller_Clone" standardStylesheets="false" showHeader="false" sidebar="false" docType="html-5.0">
+<apex:form >
+<c:head_include ></c:head_include>
+
+<style>
+.download-center{
+    background-image: url('{!URLFOR($Resource.img, '/img/backgrounds/profile-banner.jpg')}');
+    height:200px; 
+    min-height:250px; 
+    width:100%; 
+    margin:0; 
+    padding:0;     
+    background-size: cover;
+}
+
+.action-button a{
+    line-height:19px !important;
+}
+
+.custom-modal{
+    text-align:center;
+}
+
+
+
+/* FILE INPUT */
+
+.fileUpload {
+    position: relative;
+    overflow: hidden;
+    margin: 10px;
+    cursor: pointer;
+}
+.fileUpload input.upload {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+    cursor: pointer;
+    opacity: 0;
+    filter: alpha(opacity=0);
+    width:50px;
+}
+
+.welcome-user{
+    background: none;
+    border: none;
+    font-size: 14px;
+}
+.popup-logo{
+            width:200px;
+        }
+        .tex-center{
+            text-align:center;
+        }
+        .case-summary-table{
+            font-size:13px;
+        }
+
+</style>
+
+<body>
+<script>
+$(window).scroll(function() {
+    if($(this).scrollTop()>0) {
+        $( ".navbar-me" ).addClass("fixed-me");
+    } else {
+        $( ".navbar-me" ).removeClass("fixed-me");
+    }
+});
+
+
+</script>
+<!--navbar menu-->
+<section>
+    <c:DealerSideMenu ></c:DealerSideMenu>
+</section>
+
+<div id="main">
+    <div style="width:90%; margin:0 auto;">
+        <div class="row" style="min-height:350px;">
+            <div class="row">
+            <div class="title-grid">
+                <h3>All Cases</h3>
+                <p class="forgotten" style="text-align:right;">
+                <apex:commandLink action="{!RedirectCase}"><span style="margin-right:5px;"><i class="fa fa-file-text-o"></i></span> Log a New Case </apex:commandLink>
+                
+            <!--    <a onclick="gotomyCase()"><span style="margin-right:5px;"><i class="fa fa-file-text-o"></i> Log a New Case</span> </a> --></p>
+            </div>
+            </div>
+            <div class="row" style="min-height:300px;">
+                    <!--//////////////////////////CASE Details View Start///////////////////--->
+                    <div class="table-responsive" id="accordion">
+                 
+                       <apex:variable value="{!0}" var="rownum"/>
+                    <apex:outputPanel id="acc1">
+          <!--     <apex:dataTable value="{!cont}" var="con" id="caseList2" cellspacing="0" styleclass="table table-bordered table-hover"  style="width:100%;"/>  -->
+
+                     <apex:dataTable value="{!allCases}" var="allcase" id="caseList" cellspacing="0" styleclass="table table-bordered table-hover"  style="width:100%;">
+
+                       <apex:column headerValue="S.No.">
+                     <apex:variable var="rownum" value="{!rownum + 1}"/>
+                     {!rowNum}
+                 </apex:column>
+                      <apex:column >
+                           <apex:facet name="header"><b>Case Number</b></apex:facet>
+                           {!allcase.CaseNumber}
+                        </apex:column> 
+                        <apex:column >
+                           <apex:facet name="header"><b>Case Status</b></apex:facet>
+                           {!allcase.Status}
+                        </apex:column>
+                        <apex:column >
+                           <apex:facet name="header"><b>Product Name</b></apex:facet>
+                           {!allcase.Product__r.Name}
+                        </apex:column>
+                        <apex:column >
+                           <apex:facet name="header"><b>Created Date</b></apex:facet>                          
+                            <apex:outputText value="{0,date,yyyy-MM-dd HH:mm:ss }">
+                                  <apex:param value="{!allcase.CreatedDate}" />
+                            </apex:outputText>
+                        </apex:column>
+                        <apex:column >
+                           <apex:facet name="header"><b>Last Comment Date</b></apex:facet>                          
+                            <apex:outputText value="{0,date,yyyy-MM-dd HH:mm:ss }">
+                                  <apex:param value="{!allcase.LastModifiedDate}" />
+                            </apex:outputText>
+                        </apex:column> 
+                       <apex:column style="text-align: right; margin-right:10px;">
+                        
+                                            <apex:commandLink action="{!distributerViewDetails}">
+                                            <apex:param name="caseid" value="{!allcase.id}"/>
+                                                <span>View Details</span>
+                                                <i class="fa fa-chevron-circle-down" style="font-size:16px; margin-left:10px;"> </i>
+                                     </apex:commandLink>
+                         </apex:column>      
+                   
+                       
+                     </apex:dataTable>
+                     </apex:outputPanel>
+                    </div>
+                    
+                <!--    <div class="form-group" style="margin-top: 5px; margin-bottom:6px">
+                        <input type="text" id="callstatusId" readonly="true" style="font-weight: bold;  text-align: center;  " class="form-control in" />          
+                     </div>
+                    
+                    <input type="text" id="cmtid" style="display:none;"/>   -->
+                </div>
+
+                </div>
+        </div>   
+        
+        
+
+</div>
+   <input type="text" id="supportcommentid" style="display:none;" />
+
+<a id="back2Top" href="#" title="Go to Top">&#10148;</a>
+
+<!--#############################FOOTER SECTION################################--->
+        <section>
+            <c:portal_footer />
+        </section>
+        <!--#############################################################--->
+<!-- end of navbar-->
+<script>
+/*Scroll to top when arrow up clicked BEGIN*/
+$(window).scroll(function() {
+    var height = $(window).scrollTop();
+    if (height > 100) {
+        $('#back2Top').fadeIn();
+    } else {
+        $('#back2Top').fadeOut();
+    }
+});
+$(document).ready(function() {
+    $("#back2Top").click(function(event) {
+        event.preventDefault();
+        $("html, body").animate({ scrollTop: 0 }, "slow");
+        return false;
+    });
+
+});
+ /*Scroll to top when arrow up clicked END*/
+</script>
+
+<script>
+/* Nav bar Open Left to Right */
+function openNav() {
+    document.getElementById("mySidenav").style.width = "350px";
+    document.getElementById("main").style.marginRight = "350px";
+    document.body.style.backgroundColor = "rgba(230,230,230,0.4)";
+}
+function closeNav() {
+    document.getElementById("mySidenav").style.width = "0";
+    document.getElementById("main").style.marginRight= "0";
+    document.body.style.backgroundColor = "white";
+}
+</script>
+
+ <script>
+var acc = document.getElementsByClassName("accordion");
+var i;
+
+for (i = 0; i < acc.length; i++) {
+    acc[i].addEventListener("click", function() {
+        this.classList.toggle("active");
+        var panel = this.nextElementSibling;
+        if (panel.style.display === "block") {
+            panel.style.display = "none";
+        } else {
+            panel.style.display = "block";
+        }
+    });
+}
+</script>   
+
+
+
+<script>
+$(document).ready(function() {
+    $("div.bhoechie-tab-menu>div.list-group>a").click(function(e) {
+        e.preventDefault();
+        $(this).siblings('a.active').removeClass("active");
+        $(this).addClass("active");
+        var index = $(this).index();
+        $("div.bhoechie-tab>div.bhoechie-tab-content").removeClass("active");
+        $("div.bhoechie-tab>div.bhoechie-tab-content").eq(index).addClass("active");
+    });
+});
+
+</script>
+
+
+
+</body>
+</apex:form>
+</apex:page>
+***********************************apex class**************************************
+global with sharing class AllCasescontroller_Clone {
+
+public List<case> allCases{get;set;}
+//public List<case> cont{get;set;}
+
+public Id contactId;
+public Id disRecordTypeId;
+public static string idd;
+
+
+public AllCasescontroller_Clone(){
+      disRecordTypeId = Schema.SObjectType.Contact.getRecordTypeInfosByName().get('Sub Dealer').getRecordTypeId();    
+      allCases = new List<case>();
+      id acid;
+      contactId = ApexPages.currentPage().getParameters().get('Id');
+    
+      Contact con = new Contact();
+      con = [select AccountId  from contact where id =: contactId];   
+   
+      acid = con.AccountId;
+      system.debug('acid=====>'+acid);  
+      allCases = [select id,CaseNumber,Status,Product__r.Name,CreatedDate,LastModifiedDate from case where AccountId =: acid ORDER BY CaseNumber DESC];
+     
+  }  
+ 
+    
+  public Pagereference distributerViewDetails(){
+   contactId = ApexPages.currentPage().getParameters().get('Id');
+    id caseid=ApexPages.currentPage().getParameters().get('caseid');
+    pagereference pr=new pagereference('/apex/DistributorViewDetails?id='+ContactId);
+    pr.SetRedirect(true);
+    pr.getParameters().put('Caseid', caseid);
+    return pr;
+    
+}  
+
+ public PageReference RedirectCase(){       
+        PageReference pr=new PageReference('/apex/DistributorCaseRegister?id='+ContactId);
+        pr.setRedirect(True);
+        return pr;
+    }    
+     
+}
