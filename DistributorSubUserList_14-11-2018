@@ -1,0 +1,382 @@
+<apex:page controller="DistributorSubUserListController" standardStylesheets="false" showHeader="false" sidebar="false" docType="html-5.0">
+<apex:form >
+<c:head_include ></c:head_include>
+
+
+<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet" />
+<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+<style>
+.download-center{
+background-image: url('{!URLFOR($Resource.img, '/img/backgrounds/profile-banner.jpg')}');
+height:200px; 
+min-height:250px; 
+width:100%; 
+margin:0; 
+padding:0;     
+background-size: cover;
+}
+/* FILE INPUT */
+
+.fileUpload {
+position: relative;
+overflow: hidden;
+margin: 10px;
+cursor: pointer;
+}
+.fileUpload input.upload {
+position: absolute;
+top: 0;
+right: 0;
+margin: 0;
+padding: 0;
+font-size: 20px;
+cursor: pointer;
+opacity: 0;
+filter: alpha(opacity=0);
+width:50px;
+}
+
+.cursor a{
+cursor:pointer;
+font-size:14px;
+}
+.switch-button{ 
+padding: 3px 12px!important;
+height:30px!important;
+}
+
+/*-----------------------*/
+
+.switch {
+position: relative;
+display: inline-block;
+width: 60px;
+height: 34px;
+}
+
+.switch input {display:none;}
+
+.slider {
+position: absolute;
+cursor: pointer;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background-color: #ccc;
+-webkit-transition: .4s;
+transition: .4s;
+}
+
+.slider:before {
+position: absolute;
+content: "";
+height: 26px;
+width: 26px;
+left: 4px;
+bottom: 4px;
+background-color: white;
+-webkit-transition: .4s;
+transition: .4s;
+}
+
+input:checked + .slider {
+background-color: #2196F3;
+}
+
+input:focus + .slider {
+box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+-webkit-transform: translateX(26px);
+-ms-transform: translateX(26px);
+transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+border-radius: 34px;
+}
+
+.slider.round:before {
+border-radius: 50%;
+}
+.url-cursor {
+        cursor: pointer;
+        font-size: 14px;
+        }
+</style>
+
+<body>
+<script>
+$(window).scroll(function() {
+if($(this).scrollTop()>0) {
+    $( ".navbar-me" ).addClass("fixed-me");
+} else {
+    $( ".navbar-me" ).removeClass("fixed-me");
+}
+});
+</script>
+<!--navbar menu-->
+<section>
+<c:DealerSideMenu ></c:DealerSideMenu>
+</section>
+
+<div id="main">
+<div style="width:90%; margin:0 auto;">
+    <div class="row" style="min-height:350px;">
+        <div class="row">
+        <div class="title-grid">
+            <h3>Other Users</h3>
+            <p class="forgotten" style="text-align:right;">
+            <a  onclick="CreateUser()" class="url-cursor"><span style="margin-right:5px;"><i class="fa fa-plus-circle" aria-hidden="true"></i></span> Add More User </a>
+            </p>
+        </div>
+        </div>
+        <div class="row" style="margin-top:10px;">
+            <div class="table-responsive" id="accordion">
+                <table id="subUserList" class="table table-bordered" cellspacing="0" style="width:100%; ">
+                   <thead>
+                      <tr style="background: #eee; text-align: left;  font-weight: bold;">
+                       
+                            <th>User Name</th>
+                            <th class="col-md-1">Title</th>
+                            <th>Email</th>
+                            <th>Landline No.</th>
+                            <th>Mobile No.</th>
+                            <th>Address</th>
+                            <th class="col-md-1">User Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!--<tr valign="middle">
+                            <th>Suman Kumar</th>
+                            <td>Salesman</td>
+                            <td>suman.kumar@sfclouds.com</td>
+                            <td>+91-1204586018</td>
+                            <td>+91-7503603668</td>
+                            <td>G284, Sector 63, Noida</td>
+                            <td><input type="checkbox" class="switch-button" data-toggle="toggle" data-on="Active" data-off="Disabled" /></td>
+                        </tr>-->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+
+<!--#############################FOOTER SECTION################################--->
+    <section>
+        <c:portal_footer />
+    </section>
+    <!--#############################################################--->
+<!-- end of navbar-->
+<script>
+/*Scroll to top when arrow up clicked BEGIN*/
+$(window).scroll(function() {
+var height = $(window).scrollTop();
+if (height > 100) {
+    $('#back2Top').fadeIn();
+} else {
+    $('#back2Top').fadeOut();
+}
+});
+$(document).ready(function() {
+$("#back2Top").click(function(event) {
+    event.preventDefault();
+    $("html, body").animate({ scrollTop: 0 }, "slow");
+    return false;
+});
+
+});
+/*Scroll to top when arrow up clicked END*/
+</script>
+
+
+<script>
+/* Nav bar Open Left to Right */
+function openNav() {
+document.getElementById("mySidenav").style.width = "350px";
+document.getElementById("main").style.marginRight = "350px";
+document.body.style.backgroundColor = "rgba(230,230,230,0.4)";
+}
+function closeNav() {
+document.getElementById("mySidenav").style.width = "0";
+document.getElementById("main").style.marginRight= "0";
+document.body.style.backgroundColor = "white";
+}
+</script>
+
+<script>
+$(document).ready(function() {
+$("div.bhoechie-tab-menu>div.list-group>a").click(function(e) {
+    e.preventDefault();
+    $(this).siblings('a.active').removeClass("active");
+    $(this).addClass("active");
+    var index = $(this).index();
+    $("div.bhoechie-tab>div.bhoechie-tab-content").removeClass("active");
+    $("div.bhoechie-tab>div.bhoechie-tab-content").eq(index).addClass("active");
+});
+});
+
+</script>
+
+
+<script>
+
+
+
+$(document).ready(function() {
+
+
+var idfield = '{!$CurrentPage.parameters.id}';
+console.log('idfield========='+idfield);
+Visualforce.remoting.Manager.invokeAction(
+             '{!$RemoteAction.DistributorSubUserListController.subUserCntrlr}',idfield,
+             function(result, event){
+             console.log('result======='+result);
+               if(event.status){
+                $.each(result, function (index, i){
+              
+                console.log('result id of case===='+result[0].Id);
+                var  cc=i;
+                  var contactId = i.Id;
+                   console.log('contactId ==>'+contactId);
+                   var usrName = i.Name;
+                   console.log('usrName ==>'+usrName );
+                   var sTitle = i.Title;
+                   console.log('sTitle ==>'+sTitle );
+                   var sEmail = i.Email;
+                   console.log('sEmail ==>'+sEmail );
+                   
+                   var sMObNo = i.MobilePhone;
+                   console.log('sMObNo ==>'+sMObNo);
+                   var sphone = i.phone;
+                   console.log('sphone ==>'+sphone );
+
+                   var saddrrs = i.MailingAddress;
+                   console.log('saddrrs ==>'+saddrrs);
+                   
+                   console.log('CheckBox--->'+i.Inactive__c);                  
+               var CheckBox1  = i.Inactive__c ;
+               
+             
+               
+              if(CheckBox1 == true)
+                    {
+                                        
+                     $("#subUserList").append('<tr>'+'<td><span>'+i.Name+'</span></td>'+'<td><span>'+i.Title+'</span></td>'+'<td><span>'+i.Email+'</span></td>'+'<td><span>'+i.MobilePhone+'</span></td>'+'<td><span>'+i.MobilePhone+'</span></td>'+'<td>'+i.MailingCity+','+i.MailingCountry+'</td>'+'<td><label class="switch"><input id='+i.Id+' type="checkbox"  onclick="myFunction(this.id,this.checked);" checked /><span class="slider round"></span></label></td>'+'</tr>').html()
+                     }
+              else
+                    {
+                     $("#subUserList").append('<tr>'+'<td><span>'+i.Name+'</span></td>'+'<td><span>'+i.Title+'</span></td>'+'<td><span>'+i.Email+'</span></td>'+'<td><span>'+i.MobilePhone+'</span></td>'+'<td><span>'+i.MobilePhone+'</span></td>'+'<td>'+i.MailingCity+','+i.MailingCountry+'</td>'+'<td><label class="switch"><input id='+i.Id+' type="checkbox"  onclick="myFunction(this.id,this.checked);" /><span class="slider round"></span></label></td>'+'</tr>').html()
+
+                    }         
+                       });
+                         
+               
+               
+               
+               }
+               },{escape:true}
+                  );
+                  
+    });   
+    
+    
+   
+                   
+</script>
+
+
+        <script>
+             
+      
+function myFunction(val,val1) {
+ 
+ 
+     
+
+        console.log('val ---'+val);
+        console.log('val1----'+val1);
+        var conid= val;
+        var checkValue=val1;
+  
+   
+ Visualforce.remoting.Manager.invokeAction(
+           '{!$RemoteAction.DistributorSubUserListController.changeUserstatus}',conid,checkValue,
+         
+         function(result, event){
+  
+            }, 
+            {escape: true}
+        );
+        
+       // window.location.reload(false);
+     
+} 
+
+
+  
+</script>
+<script>
+function CreateUser()
+{
+      
+        console.log('function call');
+        var  currentId = '{!$CurrentPage.parameters.id}';
+        console.log('currentId =='+currentId );
+
+       window.location.href = 'https://saasnic-philipsnl.cs89.force.com/apex/SubUserCreation?id='+currentId;
+      
+      }
+</script>
+</body>
+</apex:form>
+</apex:page>
+*******************************************apex class ******************************
+global with sharing class DistributorSubUserListController {
+public static string idd;
+public DistributorSubUserListController (){
+}
+ @RemoteAction
+ global static list<contact> subUserCntrlr(string idd){
+ id accId;
+ Id disRecordTypeId = Schema.SObjectType.Contact.getRecordTypeInfosByName().get('Sub Dealer').getRecordTypeId();
+  List<contact> con1 = new List<contact>();
+ con1 = [select id,Name,AccountId from contact where id =: idd];
+ accId=con1[0].AccountId;
+ 
+  system.debug('accId===='+accId);
+
+ 
+ system.debug('disRecordTypeId ===='+disRecordTypeId );
+ List<contact> con = new List<contact>();
+ con = [select id,Name,AccountId,Title,Email,MobilePhone,phone,MailingAddress,MailingStreet,MailingCity,MailingState,MailingPostalCode,MailingCountry,Inactive__c,RecordTypeId  from contact where AccountId =: accId and RecordTypeId =:disRecordTypeId];
+ 
+ system.debug('con======>'+con);
+ return con; 
+}
+
+ @RemoteAction
+ global static Contact changeUserstatus(string contactId, Boolean mycheckValue){
+ 
+        system.debug('contactId=======>'+contactId);
+        system.debug('mycheckValue=======>'+mycheckValue);
+
+        Contact cont = [select id,Name,Inactive__c  from contact where id =: contactId ];
+        system.debug('cont=======>'+cont);
+        cont.Inactive__c= mycheckValue;        
+        update cont;
+        return cont;        
+}
+public PageReference SubUserRedirect(){
+    string idd=apexpages.currentpage().getparameters().get('id');
+    PageReference pr=new PageReference('/apex/SubUserCreation?id='+idd);
+    pr.setRedirect(true);
+    return pr;
+}
+}
