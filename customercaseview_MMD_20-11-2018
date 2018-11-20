@@ -1,0 +1,254 @@
+<apex:page controller="customercaseviewcontroller_Clone" standardStylesheets="false" showHeader="false" sidebar="false" docType="html-5.0">
+   <c:head_include ></c:head_include>
+   <c:portal_Script ></c:portal_Script>
+    <meta name="viewport" content="width=device-width" />
+   <style>
+        @media all and (min-width: 960px) {
+                body{
+                    font-size: 14px;
+                }
+            }
+             
+            @media all and (max-width: 959px) and (min-width: 600px) {
+                body{
+                    font-size: 15px;
+                }
+                .site-logo {
+                padding: 0px 31px !important;
+                margin: 0px 0px;
+                }
+            }
+             
+            @media all and (max-width: 599px) and (min-width: 320px) {
+                body{
+                    font-size: 17px;
+                }
+                .site-logo {
+                padding: 0px 14px !important;
+                margin: 0px 0px;
+                }
+            }
+   
+      #caseview-center{
+      background-image: url('{!URLFOR($Resource.img, '/img/backgrounds/case_log.jpg')}');
+      height:200px; 
+      min-height:250px; 
+      width:100%; 
+      margin:0; 
+      padding:0;     
+      background-size: cover;
+      }
+      .comment-window{
+      background-image: url('{!URLFOR($Resource.img, '/img/backgrounds/bg-white.png')}'); 
+      background-color: #f5f5f5c4; 
+      }
+      .comment-panel-body{
+      padding:10px;
+      }
+      .panel .slidedown .glyphicon, .chat .glyphicon
+      {
+      margin-right: 5px;
+      }
+      .custom-modal{
+      border-radius: 0;
+      text-align: center;
+      }
+      .custom-modal-title{
+      font-size:19px;
+      color:#369ce6;
+      }
+      .action-button a{
+      line-height:19px !important;
+      }
+      .comment-input{
+      height: 34px !important;
+      margin: 0;
+      padding: 0 12px !important;
+      vertical-align: middle;
+      background: #ffffff5e;
+      border: 1px solid #ddd;
+      font-family: centrale_sans,tahoma,arial,helvetica,sans-serif;
+      font-size: 14px!important;
+      font-weight: 400;
+      line-height: 40px;
+      color: #888;
+      -moz-border-radius: 4px;
+      -webkit-border-radius: 4px;
+      border-radius: 4px;
+      -moz-box-shadow: none;
+      -webkit-box-shadow: none;
+      box-shadow: none;
+      -o-transition: all .3s;
+      -moz-transition: all .3s;
+      -webkit-transition: all .3s;
+      -ms-transition: all .3s;
+      transition: all .3s;
+      }
+      .panel-body-comment {
+      overflow-y: scroll;
+      height: 155px;
+      }
+      /* FILE INPUT */
+      .fileUpload {
+      position: relative;
+      overflow: hidden;
+      margin: 10px;
+      cursor: pointer;
+      }
+      .fileUpload input.upload {
+      position: absolute;
+      top: 0;
+      right: 0;
+      margin: 0;
+      padding: 0;
+      font-size: 20px;
+      cursor: pointer;
+      opacity: 0;
+      filter: alpha(opacity=0);
+      width:50px;
+      }
+      .welcome-user{
+      background: none;
+      border: none;
+      font-size: 14px;
+      }
+      .url-cursor {
+      cursor: pointer;
+      font-size: 14px;
+      }
+      .popup-logo{
+      width:200px;
+      }
+      .tex-center{
+      text-align:center;
+      }
+      .case-summary-table{
+      font-size:13px;
+      }
+      .left{
+      text-align:left;
+      }
+      .right{
+      text-align:right;
+      }
+      .center{
+      text-align:center;
+      }
+   </style>
+   <!-- Begin Default Content REMOVE THIS -->
+   <body>
+      <script>
+         $(window).scroll(function() {
+             if($(this).scrollTop()>0) {
+                 $( ".navbar-me" ).addClass("fixed-me");
+             } else {
+                 $( ".navbar-me" ).removeClass("fixed-me");
+             }
+         });
+      </script>
+      <!--navbar menu-->
+      <section class="navbar-info">
+         <c:CustomerSideMenu ></c:CustomerSideMenu>
+      </section>
+      <!---////////////////Side Button////////////////-->
+      <!---////////////////Side Button////////////////-->
+      <div id="main">
+         <div style="width:90%; margin:0 auto;">
+            <div class="row">
+               <div class="title-grid">
+                  <h3>Case Details List</h3>
+                  <p class="forgotten" style="text-align:right;">
+                     <apex:outputLink value="/apex/ProblemsFAQCustomer?id={!con.id}" ><span style="margin-right:5px;"><i class="fa fa-list-alt" aria-hidden="true"></i></span> Go to FAQ's</apex:outputLink>
+                     <span style="margin-left:10px; margin-right:10px; color:#333;">| </span>
+                     <apex:outputLink value="/apex/CustomerCaseRegister?id={!con.id}" styleClass="url-cursor"><span style="margin-right:5px;"><i class="fa fa-file-text-o"></i></span> Log a New Case </apex:outputLink>
+                  </p>
+               </div>
+            </div>
+            <div class="row">
+               <!--//////////////////////////CASE Details View Start///////////////////--->
+               <div class="table-responsive" id="accordion">
+                  <table id="example" class="display table table-bordered" cellspacing="0" style="width:100%;">
+                     <thead>
+                        <tr style="background: #eee; text-align: left;  font-weight: bold;">
+                           <td >S.No.</td>
+                           <td class="col-md-2 tex-center" >Case Number </td>
+                           <td class="col-md-2 tex-center">Case Status</td>
+                           <td class="col-md-2 tex-center">Product Name</td>
+                           <td class="col-md-2 tex-center">Created Date</td>
+                           <td class="col-md-2 tex-center">Last Comment Date</td>
+                           <td class="col-md-2 tex-center">&nbsp;</td>
+                        </tr>
+                     </thead>
+                     <tbody>
+                        <apex:variable value="{!0}" var="count"/>
+                        <apex:repeat value="{!caseViewList}" var="ca">
+                           <apex:variable value="{!count+1}" var="count"/>
+                           <tr>
+                              <td ><span>{!count}</span></td>
+                              <td  ><span style="color:#19b9e7;">{!ca.CaseNumber} </span></td>
+                              <td  ><span>{!ca.Status}</span></td>
+                              <td ><span>{!ca.Product__r.Name}</span></td>
+                              <td  >
+                                 <span>
+                                    <apex:outputText value="{0,date,yyyy-MM-dd HH:mm:ss }">
+                                       <apex:param value="{!ca.CreatedDate}" />
+                                    </apex:outputText>
+                                 </span>
+                              </td>
+                              <td  >
+                                 <span>
+                                    <apex:outputText value="{0,date,yyyy-MM-dd HH:mm:ss }">
+                                       <apex:param value="{!ca.LastModifiedDate}" />
+                                    </apex:outputText>
+                                 </span>
+                              </td>
+                              <td style="text-align: right; margin-right:10px;" >
+                                 <apex:outputLink value="/apex/viewDetails_MMD?id={!con.id}&caseid={!ca.id}">View Details<i class="fa fa-chevron-circle-right" style="font-size:16px; margin-left:10px;"></i></apex:outputLink>
+                              </td>
+                           </tr>
+                        </apex:repeat>
+                     </tbody>
+                  </table>
+               </div>
+            </div>
+         </div>
+      </div>
+      <section>
+         <c:portal_footer />
+      </section>
+      <!--##############################ON MOUSEOVER SHOW CASE Details#############################################-->
+      <a id="back2Top" href="#" title="Go to Top">&#10148;</a>
+      <!--#############################FOOTER SECTION################################--->
+      <!-- end of navbar-->    
+   </body>
+   <!-- End Default Content REMOVE THIS -->
+</apex:page>
+************************************apex classes*******************************
+Public class customercaseviewcontroller_Clone {
+
+    public String attId { get; set; }
+    public static string idd;
+    public static Id attachmentid;
+    public static Blob body;
+    public static string filename;
+    public static Id customerId;
+    public contact con{get;set;}
+    
+    public customercaseviewcontroller_Clone (){
+        string conid=apexpages.currentpage().getparameters().get('id');
+        con=new contact();
+        con=[select id,name from contact where id=:conid];
+    }
+    public list<case> getcaseViewList(){
+        string conid=apexpages.currentpage().getparameters().get('id');
+        list<case> cas = new list<case>();
+        list<contact> cono = new list<contact>();
+        cono=[select id,Name,Company__c,User_Name__c,Email,(select Id,Contact.Name,Contact_Name__c,CreatedDate,createdDate__c,LastModifiedDate,lastModifiedDate__c,Owner.Name,Purchase_Date_F__c,Complaint_Type__c,Complain_Number1__c,Purchase_Date__c,Extended_Warranty_Taken__c,Contactid,Model_Number__c,ContactEmail,Extended_Warranty_Duration__c,Status,Case_Number__c,CaseNumber,Product__r.Name,Product_List__c,Product_Name__c,Description from cases order by CaseNumber DESC) from contact where id =:conid limit 1 ];   
+        for(case c : cono[0].cases){
+          cas.add(c);
+        }
+       system.debug(cas);
+      return cas;
+    }
+
+}
